@@ -1,6 +1,6 @@
 <?php
 	include 'Open_data.php';
-	$open_data = new Open_data();
+	$open_data = new Open_data('jkt');
 ?>
 <!DOCTYPE html>
 <html lang="">
@@ -42,6 +42,7 @@
 				</div>
 			</div>
 			<div id="top-org"></div>
+			<hr>
 			<div id="top-group"></div>
 		</div>
 
@@ -53,11 +54,20 @@
 
 	</body>
 </html>
+<?php $org = $open_data->get_top_org(); ?>
+<?php $grup = $open_data->get_top_grup(); ?>
 <script>
 	$(function () {
 		$('#top-org').highcharts({
 			chart: {
-				type: 'column'
+				type: 'column',
+				options3d: {
+					enabled: true,
+					alpha: 15,
+					beta: 15,
+					depth: 50,
+					viewDistance: 25
+				}
 			},
 			title: {
 				text: '10 Organisasi dengan Jumlah Dataset Terbanyak'
@@ -65,19 +75,13 @@
 			subtitle: {
 				text: 'Sumber: <a href="http://data.bandung.go.id">Open Data Bandung</a>'
 			},
-			xAxis: {
-				categories: ['dinas-kependudukan-dan-pencatatan-sipil',
-							 'dinas-kesehatan',
-							 'badan-perencanaan-pembangunan-daerah',
-							 'sekretariat-daerah',
-							 'dinas-kebudayaan-dan-pariwisata',
-							 'dinas-pendidikan',
-							 'badan-kepegawaian-daerah',
-							 'badan-pusat-statistik',
-							 'dinas-perhubungan'],
-				labels: {
-					rotation: -45,
+			plotOptions: {
+				column: {
+					depth: 25
 				}
+	        },
+			xAxis: {
+				categories: [<?php echo $open_data->export_axis('x', $org) ?>],
 			},
 			yAxis: {
 				min: 0,
@@ -90,7 +94,7 @@
 			},
 			series: [{
 				name: 'Jumlah Dataset',
-				data: [69, 39, 33, 28, 25, 25, 23, 22, 22]
+				data: [<?php echo $open_data->export_axis('y', $org) ?>]
 			}]
 		});
 
@@ -105,10 +109,7 @@
 				text: 'Sumber: <a href="http://data.bandung.go.id">Open Data Bandung</a>'
 			},
 			xAxis: {
-				type: 'category',
-				labels: {
-					rotation: -45,
-				}
+				categories: [<?php echo $open_data->export_axis('x', $grup) ?>],
 			},
 			yAxis: {
 				min: 0,
@@ -121,29 +122,7 @@
 			},
 			series: [{
 				name: 'Jumlah Dataset',
-				data: [
-					['kependudukan-dan-ketenagakerjaan', 107],
-					['ekonomi-dan-keuangan', 75],
-					['lingkungan', 52],
-					['infrastruktur', 40],
-					['sosial', 38],
-					['kesehatan', 34],
-					['pendidikan', 29],
-					['pariwisata-dan-kebudayaan', 26],
-					['perhubungan', 11],
-					['kebencanaan', 8]
-				],
-				dataLabels: {
-					enabled: true,
-					rotation: -90,
-					color: '#FFFFFF',
-					align: 'right',
-					y: 10, // 10 pixels down from the top
-					style: {
-						fontSize: '13px',
-						fontFamily: 'Verdana, sans-serif'
-					}
-				}
+				data: [<?php echo $open_data->export_axis('y', $grup) ?>],
 			}]
 		});
 	});
