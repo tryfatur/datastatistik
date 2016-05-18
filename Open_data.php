@@ -4,6 +4,7 @@ class Open_data
 	private $_portal_url;
 	private $_api_url;
 	private $_url_to_process;
+	private $_result;
 
 	function __construct($portal = 'bdg')
 	{
@@ -31,9 +32,7 @@ class Open_data
 		else
 			$result = file_get_contents($url);
 
-		$result = json_decode($result);
-
-		return $result;
+		return json_decode($result);
 	}
 
 	public function basic_stats($type)
@@ -50,6 +49,67 @@ class Open_data
 		$result = $this->process_api($url);
 
 		return count($result->result);
+	}
+
+	public function get_top_org()
+	{
+		$this->set_action('organization_list');
+
+		$result = $this->process_api($this->_url_to_process);
+		$temp = 0;
+
+		for ($i=0; $i < count($result->result); $i++)
+		{
+			$dataset_count = $this->process_api($this->set_action("package_search?q=organization:".$result->result[$i]."&start=0&rows=500"));
+
+			$data[$result->result[$i]] = $dataset_count->result->count;
+		}
+		arsort($data);
+
+		return $this->_result = array_slice($data, 0, 9, true);
+	}
+
+	public function get_top_grup()
+	{
+		$this->set_action('group_list');
+
+		$result = $this->process_api($this->_url_to_process);
+		$temp = 0;
+
+		for ($i=0; $i < count($result->result); $i++)
+		{
+			$dataset_count = $this->process_api($this->set_action("package_search?q=groups:".$result->result[$i]."&start=0&rows=500"));
+
+			$data[$result->result[$i]] = $dataset_count->result->count;
+		}
+		arsort($data);
+
+		return $this->_result = array_slice($data, 0, 9, true);
+	}
+
+	public function export_axis($axis, $data = null)
+	{
+		if (is_null($data))
+		{
+			foreach ($this->_result as $key => $value)
+			{
+				$xAxies[] = "'".$key."'";
+				$yAxies[] = $value;
+			}
+		}
+		else
+		{
+			foreach ($data as $key => $value)
+			{
+				$xAxies[] = "'".$key."'";
+				$yAxies[] = $value;
+			}
+		}
+
+		if ($axis == 'x')
+			return implode(',', $xAxies);
+		else
+			return implode(',', $yAxies);
 	}
 }
 ?>
