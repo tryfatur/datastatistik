@@ -1,22 +1,28 @@
 <?php
-// header("content-type: application/json"); 
-/*$result = $open_data->process_api('http://data.bandung.go.id/api/3/action/group_list');
-	$temp = 0;
+	// header("content-type: application/json"); 
+	include 'Open_data.php';
+	
+	$open_data = new Open_data();
 
-	for ($i=0; $i < count($result->result); $i++)
+	$url = $open_data->set_action('package_search?q=organization:dinas-kependudukan-dan-pencatatan-sipil&start=0&rows=100');
+	$ahay = $open_data->process_api($url)->result;
+
+	for ($i=0; $i < count($ahay->results); $i++)
 	{ 
-		$dataset_count = $open_data->process_api("http://data.bandung.go.id/api/3/action/package_search?q=groups:".$result->result[$i]."&start=0&rows=500");
+		for ($j=0; $j < count($ahay->results[$i]); $j++)
+		{
+			$created = split('T', $ahay->results[$i]->resources[$j]->created);
 
-		$data[$result->result[$i]] = $dataset_count->result->count;
+			$data_created[$i]['name'] = $ahay->results[$i]->resources[$j]->name;
+			$data_created[$i]['date_created'] = $created[0];
+			$data_created[$i]['time_created'] = $created[1];
+		}
 	}
 
-	arsort($data);
-
-	$top_ten = array_slice($data, 0, 9, true);
-
 	echo "<pre>";
-	print_r ($data);
-	echo "</pre>";*/
+	print_r ($data_created);
+	echo "</pre>";
+
 
 	/*$top_ten = array('dinas-kependudukan-dan-pencatatan-sipil' => 69,
 				'dinas-kesehatan' => 39,
@@ -28,7 +34,7 @@
 				'badan-pusat-statistik' => 22,
 				'dinas-perhubungan' => 22);*/
 
-	$chart_groups = array("kependudukan-dan-ketenagakerjaan" => 107,
+	/*$chart_groups = array("kependudukan-dan-ketenagakerjaan" => 107,
 						"ekonomi-dan-keuangan" => 75,
 						"lingkungan" => 52,
 						"infrastruktur" => 40,
@@ -37,14 +43,5 @@
 						"pendidikan" => 29,
 						"pariwisata-dan-kebudayaan" => 26,
 						"perhubungan" => 11,
-						"kebencanaan" => 8);
-
-	foreach ($chart_groups as $key => $value)
-	{
-		$xAxies[] = $key;
-		$yAxies[] = $value;
-	}
-
-	echo implode(',', $xAxies);
-
+						"kebencanaan" => 8);*/
 ?>

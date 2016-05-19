@@ -87,13 +87,18 @@ class Open_data
 		return $this->_result = array_slice($data, 0, 9, true);
 	}
 
+	private function _rename_title($title)
+	{
+		return ucwords(strtolower(str_replace('-', ' ', $title)));
+	}
+
 	public function export_axis($axis, $data = null)
 	{
 		if (is_null($data))
 		{
 			foreach ($this->_result as $key => $value)
 			{
-				$xAxies[] = "'".$key."'";
+				$xAxies[] = "'".$this->_rename_title($key)."'";
 				$yAxies[] = $value;
 			}
 		}
@@ -101,7 +106,7 @@ class Open_data
 		{
 			foreach ($data as $key => $value)
 			{
-				$xAxies[] = "'".$key."'";
+				$xAxies[] = "'".$this->_rename_title($key)."'";
 				$yAxies[] = $value;
 			}
 		}

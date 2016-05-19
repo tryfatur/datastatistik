@@ -1,6 +1,6 @@
 <?php
 	include 'Open_data.php';
-	$open_data = new Open_data('jkt');
+	$open_data = new Open_data();
 ?>
 <!DOCTYPE html>
 <html lang="">
@@ -20,7 +20,8 @@
 					<div class="thumbnail">
 						<div class="caption text-center">
 							<h4>Total Dataset</h4>
-							<h1 style="font-size: 150px"><?php echo $open_data->basic_stats('dataset') ?></h1>
+							<input type="hidden" id="total_dataset" value="<?php echo $open_data->basic_stats('dataset') ?>">
+							<h1 style="font-size: 150px" id="totalDataset"></h1>
 						</div>
 					</div>
 				</div>
@@ -28,7 +29,8 @@
 					<div class="thumbnail">
 						<div class="caption text-center">
 							<h4>Total Organisasi</h4>
-							<h1 style="font-size: 150px"><?php echo $open_data->basic_stats('org') ?></h1>
+							<input type="hidden" id="total_org" value="<?php echo $open_data->basic_stats('org') ?>">
+							<h1 style="font-size: 150px" id="totalOrg"></h1>
 						</div>
 					</div>
 				</div>
@@ -36,7 +38,8 @@
 					<div class="thumbnail">
 						<div class="caption text-center">
 							<h4>Total Grup</h4>
-							<h1 style="font-size: 150px"><?php echo $open_data->basic_stats('group') ?></h1>
+							<input type="hidden" id="total_group" value="<?php echo $open_data->basic_stats('group') ?>">
+							<h1 style="font-size: 150px" id="totalGroup"></h1>
 						</div>
 					</div>
 				</div>
@@ -51,7 +54,8 @@
 		<!-- Bootstrap JavaScript -->
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 		<script src="http://code.highcharts.com/highcharts.js"></script>
-
+		<script src="https://code.highcharts.com/highcharts-3d.js"></script>
+		<script src="countUp.js"></script>
 	</body>
 </html>
 <?php $org = $open_data->get_top_org(); ?>
@@ -63,9 +67,9 @@
 				type: 'column',
 				options3d: {
 					enabled: true,
-					alpha: 15,
-					beta: 15,
-					depth: 50,
+					alpha: 20,
+					beta: 0,
+					depth: 100,
 					viewDistance: 25
 				}
 			},
@@ -79,7 +83,7 @@
 				column: {
 					depth: 25
 				}
-	        },
+			},
 			xAxis: {
 				categories: [<?php echo $open_data->export_axis('x', $org) ?>],
 			},
@@ -98,9 +102,18 @@
 			}]
 		});
 
-		$('#top-group').highcharts({
+		// Set up the chart
+		var chart = new Highcharts.Chart({
 			chart: {
-				type: 'column'
+				renderTo: 'top-group',
+				type: 'column',
+				options3d: {
+					enabled: true,
+					alpha: 20,
+					beta: 0,
+					depth: 100,
+					viewDistance: 25
+				}
 			},
 			title: {
 				text: '10 Grup dengan Jumlah Dataset Terbanyak'
@@ -111,10 +124,9 @@
 			xAxis: {
 				categories: [<?php echo $open_data->export_axis('x', $grup) ?>],
 			},
-			yAxis: {
-				min: 0,
-				title: {
-					text: 'Jumlah Dataset'
+			plotOptions: {
+				column: {
+					depth: 25
 				}
 			},
 			legend: {
@@ -125,5 +137,34 @@
 				data: [<?php echo $open_data->export_axis('y', $grup) ?>],
 			}]
 		});
+
+		function showValues() {
+			$('#alpha-value').html(chart.options.chart.options3d.alpha);
+			$('#beta-value').html(chart.options.chart.options3d.beta);
+			$('#depth-value').html(chart.options.chart.options3d.depth);
+		}
+
+		// Activate the sliders
+		$('#sliders input').on('input change', function () {
+			chart.options.chart.options3d[this.id] = this.value;
+			showValues();
+			chart.redraw(false);
+		});
+
+		showValues();
 	});
+
+	//countUp.js
+	var options = {
+		useEasing : true, 
+		useGrouping : false
+	};
+
+	var dataset = new CountUp("totalDataset", 0, document.getElementById("total_dataset").value, 0, 7, options);
+	var org = new CountUp("totalOrg", 0, document.getElementById("total_org").value, 0, 7, options);
+	var group = new CountUp("totalGroup", 0, document.getElementById("total_group").value, 0, 7, options);
+	
+	dataset.start();
+	org.start();
+	group.start();
 </script>
