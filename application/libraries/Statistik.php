@@ -123,6 +123,33 @@ class Statistik
 		return $data_created;
 	}
 
+	public function aktifitas_organisasi($org, $axis)
+	{
+		$data = $this->dataset_list($org);
+
+		for ($i=0; $i < count($data); $i++)
+		{
+			$month = explode('-', $data[$i]['date_created']); // Memisahkan tahun, bulan dan hari
+			$date_created[] = $month[0].'-'.$month[1]; // Menggabungkan tahun dan bulan
+		}
+
+		$populated = array_count_values($date_created); // Pengelompokan berdasarkan tahun dan bulan
+
+		ksort($populated); // Pengurutan ascending
+
+		if ($axis == 'x')
+		{
+			foreach ($populated as $key => $value)
+				$date[] = "'".$key."'";
+
+			return $date_populated = implode(',', $date);
+		}
+		else
+		{
+			return $date_populated = implode(',', $populated);
+		}
+	}
+
 	private function _rename_title($title)
 	{
 		return ucwords(strtolower(str_replace('-', ' ', $title)));
