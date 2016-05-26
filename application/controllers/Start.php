@@ -79,26 +79,51 @@ class Start extends CI_Controller
 
 		$data['result']       = $this->statistik->process_api()->result;
 		$data['dataset_list'] = $this->statistik->dataset_list($this->uri->segment(4));
+		$data['detail_org_x'] = $this->statistik->aktifitas_organisasi($this->uri->segment(4), 'x');
+		$data['detail_org_y'] = $this->statistik->aktifitas_organisasi($this->uri->segment(4), 'y');
+
 		$data['content']      = $this->load->view('v_detail_statistik', $data, TRUE);
 
 		$this->load->view('template/v_base_template', $data);
 	}
 
-	public function coba()
+	public function debug()
 	{
 		$this->load->library('statistik');
 		$this->statistik->set_portal('jakarta');
-		$this->statistik->set_action('organization_list?sort=package_count%20desc&all_fields=true');
-		$result = $this->statistik->process_api();
+		//$this->statistik->set_action('organization_activity_list?id=dinas-pariwisata&limit=100');
+		$result = $this->statistik->dataset_list('dinas-pariwisata');
+		//result = $this->statistik->process_api();
 
-		for ($i=0; $i < count($result->result) ; $i++)
-		{ 
-			$new_array[$i]['display_name'] = $result->result[$i]->display_name;
-			$new_array[$i]['package_count'] = $result->result[$i]->package_count;
+		for ($i=0; $i < count($result); $i++)
+		{
+			$month = explode('-', $result[$i]['date_created']);
+			$date_created[] = $month[0].'-'.$month[1];;
 		}
 
+		/*for ($i=0; $i < count($result->result) ; $i++)
+		{
+			$timestamp = explode('T', $result->result[$i]->timestamp);
+			$month = explode('-', $timestamp[0]);
+
+			$new_array[$i] = $month[0].'-'.$month[1];
+			$new_array[$i]['timestamp_date'] = $timestamp[0];
+			$new_array[$i]['timestamp_time'] = $timestamp[1];
+			$new_array[$i]['activity_type'] = $result->result[$i]->activity_type;
+			$new_array[$i]['id'] = $result->result[$i]->id;
+		}*/
+
+		$populated = array_count_values($date_created);
+
+		ksort($populated);
+
+		foreach ($populated as $key => $value)
+			$date[] = "'".$key."'";
+
+		$date_ = implode(',', $date);
+
 		echo "<pre>";
-		print_r ($new_array);
+		print_r ($date_);
 		echo "</pre>";
 	}
 }
