@@ -1,7 +1,7 @@
 <div class="jumbotron">
 	<h1>Selamat Datang !</h1>
 	<p>
-		Indonesia Open Data Statistics adalah sebuah platform dimana kamu bisa melihat statistik
+		Indonesia Open Data Portal Statistics adalah sebuah platform dimana kamu bisa melihat statistik
 		dari portal-portal keterbukaan data pemerintah Indonesia. Lebih lanjut, klik di <b><a href="#">sini</a></b> !
 	</p>
 </div>

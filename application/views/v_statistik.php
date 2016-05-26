@@ -84,3 +84,98 @@
 		</div>
 	</div>
 </div>
+
+<script src="<?= base_url('assets/js/countUp.js') ?>"></script>
+<script>
+	//countUp.js
+	var options = {
+		useEasing : true, 
+		useGrouping : false
+	};
+
+	var dataset = new CountUp("totalDataset", 0, document.getElementById("total_dataset").value, 0, 7, options);
+	var org = new CountUp("totalOrg", 0, document.getElementById("total_org").value, 0, 7, options);
+	var group = new CountUp("totalGroup", 0, document.getElementById("total_group").value, 0, 7, options);
+	
+	dataset.start();
+	org.start();
+	group.start();
+</script>
+
+<script>
+	$(function () {
+		$('#top-org').highcharts({
+			chart: {
+				type: 'column',
+				options3d: {
+					enabled: true,
+					alpha: 20,
+					beta: 0,
+					depth: 100,
+					viewDistance: 25
+				}
+			},
+			title: {
+				text: '10 Organisasi dengan Jumlah Dataset Terbanyak'
+			},
+			subtitle: {
+				text: 'Sumber: <a href="http://data.bandung.go.id">Open Data Bandung</a>'
+			},
+			plotOptions: {
+				column: {
+					depth: 25
+				}
+			},
+			xAxis: {
+				categories: [<?= $top_org_name ?>],
+			},
+			yAxis: {
+				min: 0,
+				title: {
+					text: 'Jumlah Dataset'
+				}
+			},
+			legend: {
+				enabled: false
+			},
+			series: [{
+				name: 'Jumlah Dataset',
+				data: [<?= $top_org_count ?>]
+			}]
+		});
+
+		$('#top-group').highcharts({
+			chart: {
+				type: 'column',
+				options3d: {
+					enabled: true,
+					alpha: 20,
+					beta: 0,
+					depth: 100,
+					viewDistance: 25
+				}
+			},
+			title: {
+				text: '10 Grup dengan Jumlah Dataset Terbanyak'
+			},
+			subtitle: {
+				text: 'Sumber: <a href="http://data.bandung.go.id">Open Data Bandung</a>'
+			},
+			xAxis: {
+				categories: [<?= $top_group_name ?>],
+			},
+			plotOptions: {
+				column: {
+					depth: 25
+				}
+			},
+			legend: {
+				enabled: false
+			},
+			series: [{
+				name: 'Jumlah Dataset',
+				data: [<?= $top_group_count ?>],
+			}]
+		});
+	});
+</script>
