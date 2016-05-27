@@ -13,6 +13,7 @@ Platform ini bekerja dengan mengakses API dari masing-masing portal. Dengan demi
 2. [Twitter Bootstrap] (https://getbootstrap.com/) (CSS Framework) version 3.3.6
 3. [FontAwesome] (http://fontawesome.io/) (CSS Icon Based) version 4.6.3
 4. [Datatables] (https://datatables.net) (Table plug-in for jQuery) version 1.10.12
+5. [CKAN] (http://ckan.org) (The open source data portal software) API version 3.0
 
 # Lisensi
 Platform ini belum menentukan jenis lisensi.
