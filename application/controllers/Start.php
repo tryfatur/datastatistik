@@ -23,32 +23,10 @@ class Start extends CI_Controller
 
 		if (isset($portal))
 		{
-			switch ($portal)
-			{
-				case 'bandung':
-					$data['title'] = 'Portal Data Bandung';
-					$data['url']   = 'http://data.bandung.go.id';
-					$data['icon']  = base_url('assets/img/pemkot-bandung.png');
-				break;
-
-				case 'jakarta':
-					$data['title'] = 'Portal Data Jakarta';
-					$data['url']   = 'http://data.jakarta.go.id';
-					$data['icon']  = base_url('assets/img/pemprov-dki-jakarta.png');
-				break;
-
-				case 'nasional':
-					$data['title'] = 'Portal Data Indonesia';
-					$data['url']   = 'http://data.go.id';
-					$data['icon']  = base_url('assets/img/nasional.png');
-				break;
-				
-				default:
-					show_404();
-					break;
-			}
-
 			$this->statistik->set_portal($portal);
+
+			$data['meta']           = $this->statistik->portal_metadata($portal);
+			$data['latest_dataset'] = $this->statistik->latest_portal_dataset();
 
 			$data['package_list'] = $this->statistik->total_package();
 			$data['org_list']     = $this->statistik->total_org();
@@ -75,12 +53,32 @@ class Start extends CI_Controller
 	public function detail()
 	{
 		$this->statistik->set_portal($this->uri->segment(3));
-		$this->statistik->set_action('organization_show?id='.$this->uri->segment(4));
 
-		$data['result']       = $this->statistik->process_api()->result;
-		$data['dataset_list'] = $this->statistik->dataset_list($this->uri->segment(4));
-		$data['detail_org_x'] = $this->statistik->aktifitas_organisasi($this->uri->segment(4), 'x');
-		$data['detail_org_y'] = $this->statistik->aktifitas_organisasi($this->uri->segment(4), 'y');
+		$data['meta'] = $this->statistik->portal_metadata($this->uri->segment(3));
+
+		if ($this->uri->segment(4) == 'org')
+		{
+			$org_name = $this->uri->segment(5);
+			$this->statistik->set_action('organization_show?id='.$org_name);
+
+			$data['result']         = $this->statistik->process_api()->result;
+			$data['dataset_list']   = $this->statistik->dataset_list($org_name, 'org');
+			$data['latest_dataset'] = $this->statistik->latest_dataset($org_name, 'org');
+			$data['detail_org_x']   = $this->statistik->aktifitas_organisasi($org_name, 'x');
+			$data['detail_org_y']   = $this->statistik->aktifitas_organisasi($org_name, 'y');
+		}
+
+		if ($this->uri->segment(4) == 'group')
+		{
+			$group_name = $this->uri->segment(5);
+			$this->statistik->set_action('group_show?id='.$group_name);
+
+			$data['result']         = $this->statistik->process_api()->result;
+			$data['dataset_list']   = $this->statistik->dataset_list($group_name, 'group');
+			$data['latest_dataset'] = $this->statistik->latest_dataset($group_name, 'group');
+			$data['detail_org_x']   = $this->statistik->aktifitas_group($group_name, 'x');
+			$data['detail_org_y']   = $this->statistik->aktifitas_group($group_name, 'y');
+		}
 
 		$data['content']      = $this->load->view('v_detail_statistik', $data, TRUE);
 
@@ -90,41 +88,7 @@ class Start extends CI_Controller
 	public function debug()
 	{
 		$this->load->library('statistik');
-		$this->statistik->set_portal('jakarta');
-		//$this->statistik->set_action('organization_activity_list?id=dinas-pariwisata&limit=100');
-		$result = $this->statistik->dataset_list('dinas-pariwisata');
-		//result = $this->statistik->process_api();
-
-		for ($i=0; $i < count($result); $i++)
-		{
-			$month = explode('-', $result[$i]['date_created']);
-			$date_created[] = $month[0].'-'.$month[1];;
-		}
-
-		/*for ($i=0; $i < count($result->result) ; $i++)
-		{
-			$timestamp = explode('T', $result->result[$i]->timestamp);
-			$month = explode('-', $timestamp[0]);
-
-			$new_array[$i] = $month[0].'-'.$month[1];
-			$new_array[$i]['timestamp_date'] = $timestamp[0];
-			$new_array[$i]['timestamp_time'] = $timestamp[1];
-			$new_array[$i]['activity_type'] = $result->result[$i]->activity_type;
-			$new_array[$i]['id'] = $result->result[$i]->id;
-		}*/
-
-		$populated = array_count_values($date_created);
-
-		ksort($populated);
-
-		foreach ($populated as $key => $value)
-			$date[] = "'".$key."'";
-
-		$date_ = implode(',', $date);
-
-		echo "<pre>";
-		print_r ($date_);
-		echo "</pre>";
+		$this->statistik->set_portal('bandung');
 	}
 }
 

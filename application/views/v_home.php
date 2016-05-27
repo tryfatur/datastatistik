@@ -11,7 +11,9 @@
 			<img src="<?= base_url('assets/img/pemkot-bandung.png') ?>" alt="Pemerintah Kota Bandung" style="width: 58%">
 			<hr>
 			<div class="caption text-center">
-				<a href="<?= base_url('start/statistik/bandung') ?>" class="btn btn-primary"><i class="fa fa-fw fa-eye"></i> Lihat Statistik</a>
+				<a href="<?= base_url('start/statistik/bandung') ?>" class="btn btn-primary" disable>
+					<i class="fa fa-fw fa-eye"></i> Lihat Statistik
+				</a>
 			</div>
 		</div>
 	</div>
@@ -20,7 +22,9 @@
 			<img src="<?= base_url('assets/img/nasional.png') ?>" alt="One Data Indonesia" style="width: 80%">
 			<hr>
 			<div class="caption text-center">
-				<a href="<?= base_url('start/statistik/nasional') ?>" class="btn btn-primary"><i class="fa fa-fw fa-eye"></i> Lihat Statistik</a>
+				<a href="<?= base_url('start/statistik/nasional') ?>" class="btn btn-primary">
+					<i class="fa fa-fw fa-eye"></i> Lihat Statistik
+				</a>
 			</div>
 		</div>
 	</div>

@@ -26,9 +26,54 @@ class Statistik
 		if ($portal == 'nasional')
 			$this->_portal_url = 'http://data.go.id';
 
+		if ($portal == 'us')
+			$this->_portal_url = 'http://catalog.data.gov';
+
 		$this->_api_url = '/api/3/action/';
 
 		//$this->_base_url = $this->_portal_url.$this->_api_url;
+	}
+
+	public function portal_status($portal)
+	{
+		$this->set_portal($portal);
+		$this->set_action('site_read');
+		
+		$result = $this->process_api();
+
+		if ($result === FALSE)
+			return FALSE;
+		else
+			return $result->result;
+	}
+
+	public function portal_metadata($portal)
+	{
+		switch ($portal)
+		{
+			case 'bandung':
+				$meta['url']          = 'http://data.bandung.go.id';
+				$meta['title']        = 'Pemerintah Kota Bandung';
+				$meta['portal_title'] = 'Portal Data Bandung';
+				$meta['icon']         = base_url('assets/img/pemkot-bandung.png');
+			break;
+
+			case 'jakarta':
+				$meta['url']          = 'http://data.jakarta.go.id';
+				$meta['title']        = 'Pemerintah Provinsi DKI Jakarta';
+				$meta['portal_title'] = 'Portal Data DKI Jakarta';
+				$meta['icon']         = base_url('assets/img/pemprov-dki-jakarta.png');
+			break;
+
+			case 'nasional':
+				$meta['url']          = 'http://data.go.id';
+				$meta['title']        = 'Republik Indonesia';
+				$meta['portal_title'] = 'Portal Data Indonesia';
+				$meta['icon']         = base_url('assets/img/nasional.png');
+			break;
+		}
+
+		return $meta;
 	}
 
 	public function set_action($action)
@@ -102,9 +147,13 @@ class Statistik
 		return $result->result;
 	}
 
-	public function dataset_list($org)
+	public function dataset_list($param, $type)
 	{
-		$this->set_action('package_search?start=0&rows=200&sort=created%20desc&q=organization:'.$org);
+		if ($type == 'org')
+			$this->set_action('package_search?start=0&rows=200&sort=created%20desc&q=organization:'.$param);
+		else
+			$this->set_action('package_search?start=0&rows=200&sort=created%20desc&q=groups:'.$param);
+
 		$result = $this->process_api()->result;
 
 		for ($i=0; $i < count($result->results); $i++)
@@ -125,7 +174,7 @@ class Statistik
 
 	public function aktifitas_organisasi($org, $axis)
 	{
-		$data = $this->dataset_list($org);
+		$data = $this->dataset_list($org, 'org');
 
 		for ($i=0; $i < count($data); $i++)
 		{
@@ -148,6 +197,88 @@ class Statistik
 		{
 			return $date_populated = implode(',', $populated);
 		}
+	}
+
+	public function aktifitas_group($group, $axis)
+	{
+		$data = $this->dataset_list($group, 'group');
+
+		for ($i=0; $i < count($data); $i++)
+		{
+			$month = explode('-', $data[$i]['date_created']); // Memisahkan tahun, bulan dan hari
+			$date_created[] = $month[0].'-'.$month[1]; // Menggabungkan tahun dan bulan
+		}
+
+		$populated = array_count_values($date_created); // Pengelompokan berdasarkan tahun dan bulan
+
+		ksort($populated); // Pengurutan ascending
+
+		if ($axis == 'x')
+		{
+			foreach ($populated as $key => $value)
+				$date[] = "'".$key."'";
+
+			return $date_populated = implode(',', $date);
+		}
+		else
+		{
+			return $date_populated = implode(',', $populated);
+		}
+	}
+
+	public function latest_dataset($param, $type)
+	{
+		if ($type == 'org')
+			$this->set_action('package_search?start=0&rows=5&sort=created%20desc&q=organization:'.$param);
+		else
+			$this->set_action('package_search?start=0&rows=5&sort=created%20desc&q=groups:'.$param);
+
+		$result = $this->process_api()->result->results;
+
+		for ($i=0; $i < count($result); $i++)
+		{ 
+			for ($j=0; $j < count($result[$i]); $j++)
+			{
+				$date = explode('T', $result[$i]->resources[$j]->created);
+
+				$new_array[$i]['name']       = $result[$i]->name;
+				$new_array[$i]['title']      = $result[$i]->title;
+				$new_array[$i]['notes']      = $result[$i]->notes;
+				$new_array[$i]['format']     = $result[$i]->resources[$j]->format;
+				$new_array[$i]['date']       = $date[0];
+				$new_array[$i]['time']       = $date[1];
+				$new_array[$i]['org_tiltle'] = $result[$i]->organization->title;
+				$new_array[$i]['org_name']   = $result[$i]->organization->name;
+			}
+		}
+
+		return $new_array;
+	}
+
+	public function latest_portal_dataset()
+	{
+		$this->set_action('current_package_list_with_resources?limit=5');
+
+		$result = $this->process_api()->result;
+
+		for ($i=0; $i < count($result); $i++)
+		{ 
+			for ($j=0; $j < count($result[$i]); $j++)
+			{
+				$date = explode('T', $result[$i]->resources[$j]->created);
+
+				$new_array[$i]['name']       = $result[$i]->name;
+				$new_array[$i]['title']      = $result[$i]->title;
+				$new_array[$i]['notes']      = $result[$i]->notes;
+				$new_array[$i]['format']     = $result[$i]->resources[$j]->format;
+				$new_array[$i]['date']       = $date[0];
+				$new_array[$i]['time']       = $date[1];
+				$new_array[$i]['org_tiltle'] = $result[$i]->organization->title;
+				$new_array[$i]['org_name']   = $result[$i]->organization->name;
+			}
+		}
+
+		return $new_array;
 	}
 
 	private function _rename_title($title)

@@ -1,8 +1,22 @@
 <?php $created = $this->statistik->split_created($result->created) ?>
 <div class="page-header">
-	<h1><?= $result->display_name ?></h1>
-	<p>Bergabung sejak <?= $this->statistik->indonesian_date($created[0]) ?> &#149; <?= $result->package_count ?> dataset &#149; <?= $result->state ?></p>
+	<h1><?= $result->display_name.' '.$meta['title'] ?></h1>
+	<blockquote>
+	<?php if (empty($result->description)): ?>
+		Organisasi/Group ini tidak memiliki deskripsi.
+	<?php else: ?>
+		<p><?= $result->description; ?></p>
+	<?php endif ?>
+	</blockquote>
+	<p class="text-right">Bergabung sejak <?= $this->statistik->indonesian_date($created[0]) ?> &#149; <?= $result->package_count ?> dataset &#149; <?= $result->state ?></p>
 </div>
+<div class="page-header">
+	<h1>5 Dataset Terbaru <?= $result->display_name.' '.$meta['title'] ?></h1>
+</div>
+<?php for ($i=0; $i < count($latest_dataset); $i++): ?>
+	<h3><?= $latest_dataset[$i]['title'] ?></h3>
+<?php endfor; ?>
+<hr>
 <div id="detailStatistik"></div>
 <hr>
 <table class="table table-bordered table-condensed" id="datasetList">
@@ -42,10 +56,10 @@
 				type: 'column'
 			},
 			title: {
-				text: 'Aktifitas Pengunggahan Dataset ' + '<?= $result->display_name ?>'
+				text: 'Aktivitas Pengunggahan Dataset ' + '<?= $result->display_name ?>'
 			},
 			subtitle: {
-				text: 'Sumber: <a href="http://data.bandung.go.id">Open Data Bandung</a>'
+				text: 'Sumber: <a href="<?= $meta['url'] ?>"><?= $meta['portal_title'] ?></a>'
 			},
 			plotOptions: {
 	            line: {

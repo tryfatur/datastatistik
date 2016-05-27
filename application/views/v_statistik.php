@@ -1,8 +1,8 @@
 <div class="page-header">
 	<div class="col-sm-1">
-		<img src="<?= $icon ?>" style="height: 48px">
+		<img src="<?= $meta['icon'] ?>" style="height: 48px">
 	</div>
-	<h1><?= $title ?><small> (<a href="<?= $url ?>" target="_blank"><?= $url ?></a>)</small></h1>
+	<h1><?= $meta['portal_title'] ?><small> (<a href="<?= $meta['url'] ?>" target="_blank"><?= $meta['url'] ?></a>)</small></h1>
 </div>
 <div class="row text-center">
 	<div class="col-md-4">
@@ -21,6 +21,13 @@
 		<h3>Grup</h3>
 	</div>
 </div>
+<hr>
+<div class="page-header">
+	<h1>5 Dataset Terbaru <?= $meta['portal_title'] ?></h1>
+</div>
+<?php for ($i=0; $i < count($latest_dataset); $i++): ?>
+	<h3><?= $latest_dataset[$i]['title'] ?></h3>
+<?php endfor; ?>
 <hr>
 <div id="top-org"></div>
 <div class="text-center">
@@ -55,7 +62,7 @@
 						<td align="center"><?= $i+1 ?></td>
 						<td><?= $result_org[$i]->display_name ?></td>
 						<td align="center">
-							<a href="<?= base_url('start').'/detail/'.$this->uri->segment(3).'/'.$result_org[$i]->name ?>" class="btn btn-success">
+							<a href="<?= base_url('start').'/detail/'.$this->uri->segment(3).'/org/'.$result_org[$i]->name ?>" class="btn btn-success">
 								<i class="fa fa-fw fa-eye"></i> Detail
 							</a>
 						</td>
@@ -74,13 +81,26 @@
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 				<h4 class="modal-title">10 Organisasi dengan Jumlah Dataset Terbanyak</h4>
 			</div>
-			<div class="modal-body">
-				
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				<button type="button" class="btn btn-primary">Save changes</button>
-			</div>
+			<table class="table table-striped table-bordered table-condensed">
+				<thead>
+					<th align="center">#</th>
+					<th align="center">Nama Grup</th>
+					<th align="center">Aksi</th>
+				</thead>
+				<tbody>
+				<?php for ($i=0; $i < count($result_group); $i++):?>
+					<tr>
+						<td align="center"><?= $i+1 ?></td>
+						<td><?= $result_group[$i]->display_name ?></td>
+						<td align="center">
+							<a href="<?= base_url('start').'/detail/'.$this->uri->segment(3).'/group/'.$result_group[$i]->name ?>" class="btn btn-success">
+								<i class="fa fa-fw fa-eye"></i> Detail
+							</a>
+						</td>
+					</tr>
+				<?php endfor; ?>
+				</tbody>
+			</table>
 		</div>
 	</div>
 </div>
@@ -119,7 +139,7 @@
 				text: '10 Organisasi dengan Jumlah Dataset Terbanyak'
 			},
 			subtitle: {
-				text: 'Sumber: <a href="http://data.bandung.go.id">Open Data Bandung</a>'
+				text: 'Sumber: <a href="<?= $meta['url']; ?>"><?= $meta['portal_title'] ?></a>'
 			},
 			plotOptions: {
 				column: {
