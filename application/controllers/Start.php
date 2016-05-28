@@ -105,12 +105,8 @@ class Start extends CI_Controller
 
 	public function debug()
 	{
-		/*$this->load->library('statistik');
-		$this->statistik->set_portal('bandung');*/
-		
-		$ahay = $this->statistik->portal_status('nasional');
-
-		var_dump($ahay);
+		$this->load->library('statistik');
+		$this->statistik->set_portal('bandung');
 	}
 }
 
