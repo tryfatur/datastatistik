@@ -14,6 +14,8 @@ Platform ini bekerja dengan mengakses API dari masing-masing portal. Dengan demi
 3. [FontAwesome] (http://fontawesome.io/) (CSS Icon Based) version 4.6.3
 4. [Datatables] (https://datatables.net) (Table plug-in for jQuery) version 1.10.12
 5. [CKAN] (http://ckan.org) (The open source data portal software) API version 3.0
+6. [Lumen] (https://bootswatch.com/lumen/) (Bootstrap Theme)
+7. [Asap Font] (https://www.google.com/fonts/specimen/Asap) by [Omnibus-Type] (https://plus.google.com/+Omnibus-type/about)
 
 # Lisensi
 Platform ini belum menentukan jenis lisensi.
