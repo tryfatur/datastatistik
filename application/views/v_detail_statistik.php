@@ -10,17 +10,28 @@
 	</blockquote>
 	<p class="text-right">Bergabung sejak <?= $this->statistik->indonesian_date($created[0]) ?> &#149; <?= $result->package_count ?> dataset &#149; <?= $result->state ?></p>
 </div>
-<div class="page-header">
-	<h1>5 Dataset Terbaru <?= $result->display_name.' '.$meta['title'] ?></h1>
-</div>
+<h2>5 Dataset Terakhir <?= $result->display_name.' '.$meta['title'] ?></h2>
+<div class="list-group">
 <?php for ($i=0; $i < count($latest_dataset); $i++): ?>
-	<h3><?= $latest_dataset[$i]['title'] ?></h3>
+	<a href="<?= $meta['url'].'/dataset/'.$latest_dataset[$i]['name'] ?>" class="list-group-item" target="_blank">
+		<h4 class="list-group-item-heading">
+			<?= $latest_dataset[$i]['title'] ?>
+			<small>
+				| <?= $this->statistik->indonesian_date($latest_dataset[$i]['date']); ?>
+				| <?= $latest_dataset[$i]['org_title'] ?>
+			</small>
+		</h4>
+		<p class="list-group-item-text">
+			<?= substr($latest_dataset[$i]['notes'], 0, 50) ?>...
+		</p>
+	</a>
 <?php endfor; ?>
+</div>
 <hr>
 <div id="detailStatistik"></div>
 <hr>
 <table class="table table-bordered table-condensed" id="datasetList">
-	<thead align="center">
+	<thead>
 		<th>No</th>
 		<th>Dataset</th>
 		<th>Tanggal Unggah</th>
@@ -49,6 +60,8 @@
 				},
 		"searching" : false,
 	});
+
+	$('#datasetList_paginate').addClass('pull-right');
 
 	$(function () {
 		$('#detailStatistik').highcharts({

@@ -11,7 +11,7 @@
 			<img src="<?= base_url('assets/img/pemkot-bandung.png') ?>" alt="Pemerintah Kota Bandung" style="width: 58%">
 			<hr>
 			<div class="caption text-center">
-				<a href="<?= base_url('start/statistik/bandung') ?>" class="btn btn-primary" disable>
+				<a href="<?= base_url('start/statistik/bandung') ?>" class="btn btn-primary" >
 					<i class="fa fa-fw fa-eye"></i> Lihat Statistik
 				</a>
 			</div>
@@ -33,7 +33,9 @@
 			<img src="<?= base_url('assets/img/pemprov-dki-jakarta.png') ?>" alt="Pemerintah Provinsi DKI Jakarta" style="width: 43%">
 			<hr>
 			<div class="caption text-center">
-				<a href="<?= base_url('start/statistik/jakarta') ?>" class="btn btn-primary"><i class="fa fa-fw fa-eye"></i> Lihat Statistik</a>
+				<a href="<?= base_url('start/statistik/jakarta') ?>" class="btn btn-primary">
+					<i class="fa fa-fw fa-eye"></i> Lihat Statistik
+				</a>
 			</div>
 		</div>
 	</div>

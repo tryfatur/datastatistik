@@ -22,12 +22,24 @@
 	</div>
 </div>
 <hr>
-<div class="page-header">
-	<h1>5 Dataset Terbaru <?= $meta['portal_title'] ?></h1>
-</div>
+<h2>5 Dataset Terbaru <?= $meta['portal_title'] ?></h2>
+<div class="list-group">
 <?php for ($i=0; $i < count($latest_dataset); $i++): ?>
-	<h3><?= $latest_dataset[$i]['title'] ?></h3>
+	<a href="<?= $meta['url'].'/dataset/'.$latest_dataset[$i]['name'] ?>" class="list-group-item active">
+		<h4 class="list-group-item-heading">
+			<?= $latest_dataset[$i]['title'] ?>
+			<small>
+				| <?= $this->statistik->indonesian_date($latest_dataset[$i]['date']); ?>
+				| <?= $latest_dataset[$i]['org_title'] ?>
+			</small>
+		</h4>
+		<p class="list-group-item-text">
+			<?= substr($latest_dataset[$i]['notes'], 0, 50) ?>...
+		</p>
+	</a>
 <?php endfor; ?>
+</div>
+
 <hr>
 <div id="top-org"></div>
 <div class="text-center">
@@ -126,6 +138,7 @@
 	$(function () {
 		$('#top-org').highcharts({
 			chart: {
+				style: { fontFamily: 'Asap'},
 				type: 'column',
 				options3d: {
 					enabled: true,
@@ -179,7 +192,7 @@
 				text: '10 Grup dengan Jumlah Dataset Terbanyak'
 			},
 			subtitle: {
-				text: 'Sumber: <a href="http://data.bandung.go.id">Open Data Bandung</a>'
+				text: 'Sumber: <a href="<?= $meta['url']; ?>"><?= $meta['portal_title'] ?></a>'
 			},
 			xAxis: {
 				categories: [<?= $top_group_name ?>],
