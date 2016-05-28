@@ -21,32 +21,41 @@ class Start extends CI_Controller
 	{
 		$portal = $this->uri->segment(3);
 
-		if (isset($portal))
+		$status = $this->statistik->portal_status($portal);
+
+		if ($status)
 		{
-			$this->statistik->set_portal($portal);
+			if (isset($portal))
+			{
+				$this->statistik->set_portal($portal);
 
-			$data['meta']           = $this->statistik->portal_metadata($portal);
-			$data['latest_dataset'] = $this->statistik->latest_portal_dataset();
+				$data['meta']           = $this->statistik->portal_metadata($portal);
+				$data['latest_dataset'] = $this->statistik->latest_portal_dataset();
 
-			$data['package_list'] = $this->statistik->total_package();
-			$data['org_list']     = $this->statistik->total_org();
-			$data['group_list']   = $this->statistik->total_group();
+				$data['package_list'] = $this->statistik->total_package();
+				$data['org_list']     = $this->statistik->total_org();
+				$data['group_list']   = $this->statistik->total_group();
 
-			$data['result_org']    = $this->statistik->get_top_org();
-			$data['top_org_name']  = $this->statistik->export_axis('x', $data['result_org']);
-			$data['top_org_count'] = $this->statistik->export_axis('y', $data['result_org']);
+				$data['result_org']    = $this->statistik->get_top_org();
+				$data['top_org_name']  = $this->statistik->export_axis('x', $data['result_org']);
+				$data['top_org_count'] = $this->statistik->export_axis('y', $data['result_org']);
 
-			$data['result_group']    = $this->statistik->get_top_group();
-			$data['top_group_name']  = $this->statistik->export_axis('x', $data['result_group']);
-			$data['top_group_count'] = $this->statistik->export_axis('y', $data['result_group']);
+				$data['result_group']    = $this->statistik->get_top_group();
+				$data['top_group_name']  = $this->statistik->export_axis('x', $data['result_group']);
+				$data['top_group_count'] = $this->statistik->export_axis('y', $data['result_group']);
 
-			$data['content'] = $this->load->view('v_statistik', $data, TRUE);
+				$data['content'] = $this->load->view('v_statistik', $data, TRUE);
 
-			$this->load->view('template/v_base_template', $data);
+				$this->load->view('template/v_base_template', $data);
+			}
+			else
+			{
+				show_404();
+			}
 		}
 		else
 		{
-			echo "False";
+			show_404();
 		}
 	}
 
@@ -85,10 +94,23 @@ class Start extends CI_Controller
 		$this->load->view('template/v_base_template', $data);
 	}
 
+	public function page_404() 
+	{
+		$this->output->set_status_header('404'); 
+		
+		$data['content'] = $this->load->view('template/v_404_error', '', TRUE);
+
+		$this->load->view('template/v_base_template', $data);
+	}
+
 	public function debug()
 	{
-		$this->load->library('statistik');
-		$this->statistik->set_portal('bandung');
+		/*$this->load->library('statistik');
+		$this->statistik->set_portal('bandung');*/
+		
+		$ahay = $this->statistik->portal_status('nasional');
+
+		var_dump($ahay);
 	}
 }
 
