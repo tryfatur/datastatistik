@@ -98,3 +98,11 @@ fieldset[disabled] .navbar-blue .btn-link:focus {
 #datasetList {
   cursor: pointer;
 }
+
+.dataTables_paginate {
+  float: right;
+}
+
+.page404 {
+  color: #fff;
+}
