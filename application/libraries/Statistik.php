@@ -30,21 +30,21 @@ class Statistik
 			$this->_portal_url = 'http://catalog.data.gov';
 
 		$this->_api_url = '/api/3/action/';
-
-		//$this->_base_url = $this->_portal_url.$this->_api_url;
 	}
 
 	public function portal_status($portal)
 	{
 		$this->set_portal($portal);
 		$this->set_action('site_read');
-		
-		$result = $this->process_api();
 
-		if ($result === FALSE)
+		$headers = get_headers($this->_url_to_process);
+
+		$response_code = substr($headers[0], 9, 3);
+
+		if ($response_code != "200")
 			return FALSE;
-		else
-			return $result->result;
+
+		return TRUE;
 	}
 
 	public function portal_metadata($portal)
@@ -161,11 +161,12 @@ class Statistik
 			for ($j=0; $j < count($result->results[$i]); $j++)
 			{
 				$created = explode('T', $result->results[$i]->resources[$j]->created);
+				$time = explode('.', $created[1]);
 
 				$data_created[$i]['name']         = trim($result->results[$i]->title);
 				$data_created[$i]['uri']          = $result->results[$i]->name;
 				$data_created[$i]['date_created'] = $created[0];
-				$data_created[$i]['time_created'] = $created[1];
+				$data_created[$i]['time_created'] = $time[0];
 			}
 		}
 
@@ -247,7 +248,7 @@ class Statistik
 				$new_array[$i]['format']     = $result[$i]->resources[$j]->format;
 				$new_array[$i]['date']       = $date[0];
 				$new_array[$i]['time']       = $date[1];
-				$new_array[$i]['org_tiltle'] = $result[$i]->organization->title;
+				$new_array[$i]['org_title'] = $result[$i]->organization->title;
 				$new_array[$i]['org_name']   = $result[$i]->organization->name;
 			}
 		}
@@ -273,7 +274,7 @@ class Statistik
 				$new_array[$i]['format']     = $result[$i]->resources[$j]->format;
 				$new_array[$i]['date']       = $date[0];
 				$new_array[$i]['time']       = $date[1];
-				$new_array[$i]['org_tiltle'] = $result[$i]->organization->title;
+				$new_array[$i]['org_title'] = $result[$i]->organization->title;
 				$new_array[$i]['org_name']   = $result[$i]->organization->name;
 			}
 		}
