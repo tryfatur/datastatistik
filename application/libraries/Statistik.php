@@ -297,10 +297,7 @@ class Statistik
 
 	public function export_csv($portal, $type, $param)
 	{
-		if ($type == 'group_list')
-			$type = 'group';
-		else
-			$type = 'org';
+		($type == 'group_list') ? $type = 'group' : $type = 'org';
 
 		$this->set_portal($portal);
 		$result = $this->dataset_list($param, $type);
@@ -327,6 +324,51 @@ class Statistik
 		else
 		{
 			return FALSE;
+		}
+	}
+
+	public function export_csv_bulk($portal, $type)
+	{
+		$this->set_portal($portal);
+		$this->set_action($type.'?all_fields=true');
+
+		$result = $this->process_api()->result;
+
+		for ($i=0; $i < count($result); $i++)
+		{ 
+			if ($result[$i]->package_count > 0)
+			{
+				$list[] = $result[$i]->name;
+			}
+		}
+
+		($type == 'group_list') ? $type = 'group' : $type = 'org';
+
+		for ($i=0; $i < count($list); $i++)
+			$dataset_list[] = $this->dataset_list($list[$i], $type);
+
+		for ($i=0; $i < count($dataset_list) ; $i++)
+		{ 
+			for ($j=0; $j < count($dataset_list[$i]); $j++)
+			{ 
+				$merger[$i][$j] = implode(',', $dataset_list[$i][$j]);
+			}
+		}
+
+		// Output headers, file CSV akan langsung di unduh (autodownload)
+		header('Content-Type: text/csv; charset=utf-8');
+		header('Content-Disposition: attachment; filename=data-'.$type.'-'.$portal.'.csv');
+
+		// Create a file pointer connected to the output stream
+		$output = fopen('php://output', 'w');
+
+		// Header kolom
+		fputcsv($output, array('organisasi', 'dataset', 'group', 'tanggal_unggah', 'waktu_unggah', 'uri'));
+
+		for ($i=0; $i < count($merger); $i++)
+		{
+			foreach ($merger[$i] as $line)
+				fputcsv($output, explode(',', $line));
 		}
 	}
 
