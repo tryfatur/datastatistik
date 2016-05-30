@@ -121,7 +121,49 @@ class Start extends CI_Controller
 	public function debug()
 	{
 		$this->load->library('statistik');
-		$this->statistik->set_portal('bandung');
+		$this->statistik->set_portal('jakarta');
+		$this->statistik->set_action('organization_list?all_fields=true');
+
+		$result = $this->statistik->process_api()->result;
+
+		for ($i=0; $i < count($result); $i++)
+		{ 
+			if ($result[$i]->package_count > 0)
+			{
+				$org_list[] = $result[$i]->name;
+			}
+		}
+
+		for ($i=0; $i < count($org_list); $i++)
+		{ 
+			$dataset_list[] = $this->statistik->dataset_list($org_list[$i], 'org');
+		}
+
+		for ($i=0; $i < count($dataset_list) ; $i++)
+		{ 
+			for ($j=0; $j < count($dataset_list[$i]); $j++)
+			{ 
+				$merger[$i][$j] = implode(',', $dataset_list[$i][$j]);
+			}
+		}
+
+		// Output headers, file CSV akan langsung di unduh (autodownload)
+		header('Content-Type: text/csv; charset=utf-8');
+		header('Content-Disposition: attachment; filename=data.csv');
+
+		// Create a file pointer connected to the output stream
+		$output = fopen('php://output', 'w');
+
+		// Header kolom
+		fputcsv($output, array('organisasi', 'dataset', 'group', 'tanggal_unggah', 'waktu_unggah', 'uri'));
+
+		for ($i=0; $i < count($merger); $i++)
+		{
+			foreach ($merger[$i] as $line)
+			{
+				fputcsv($output, explode(',', $line));
+			}
+		}
 	}
 }
 

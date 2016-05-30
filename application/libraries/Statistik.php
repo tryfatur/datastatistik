@@ -154,30 +154,36 @@ class Statistik
 		else
 			$this->set_action('package_search?start=0&rows=200&sort=created%20desc&q=groups:'.$param);
 
-		$result = $this->process_api()->result->results;
+		$result = $this->process_api()->result;
 
-		for ($i=0; $i < count($result); $i++)
-		{ 
-			for ($j=0; $j < count($result[$i]); $j++)
-			{
-				$created = explode('T', $result[$i]->resources[$j]->created);
-				$time = explode('.', $created[1]);
+		if ($result->count > 0)
+		{
+			for ($i=0; $i < $result->count; $i++)
+			{ 
+				for ($j=0; $j < count($result->results[$i]); $j++)
+				{
+					$created = explode('T', $result->results[$i]->resources[$j]->created);
+					$time = explode('.', $created[1]);
 
-				$data_created[$i]['org']          = $result[$i]->organization->title;
-				$data_created[$i]['name']         = trim($result[$i]->title);
-				
-				if (!empty($result[$i]->groups))
-					$data_created[$i]['groups']   = $result[$i]->groups[0]->title;
-				else
-					$data_created[$i]['groups']   = '';
+					$data_created[$i]['org']          = $result->results[$i]->organization->title;
+					$data_created[$i]['name']         = trim($result->results[$i]->title);
+					
+					if (!empty($result->results[$i]->groups))
+						$data_created[$i]['groups']   = $result->results[$i]->groups[0]->title;
+					else
+						$data_created[$i]['groups']   = '';
 
-				$data_created[$i]['date_created'] = $created[0];
-				$data_created[$i]['time_created'] = $time[0];
-				$data_created[$i]['uri']          = $result[$i]->name;
+					$data_created[$i]['date_created'] = $created[0];
+					$data_created[$i]['time_created'] = $time[0];
+					$data_created[$i]['uri']          = $result->results[$i]->name;
+				}
 			}
+			return $data_created;
 		}
-
-		return $data_created;
+		else
+		{
+			return FALSE;
+		}
 	}
 
 	public function aktifitas_organisasi($org, $axis)
@@ -295,31 +301,33 @@ class Statistik
 			$type = 'group';
 		else
 			$type = 'org';
-		
-		// Output headers, file CSV akan langsung di unduh (autodownload)
-		header('Content-Type: text/csv; charset=utf-8');
-		header('Content-Disposition: attachment; filename=data-'.$portal.'-'.$type.'-'.$param.'.csv');
 
 		$this->set_portal($portal);
 		$result = $this->dataset_list($param, $type);
 
-		for ($i=0; $i < count($result); $i++)
-			$merger[$i] = implode(',', $result[$i]);
+		if (is_array($result))
+		{
+			// Output headers, file CSV akan langsung di unduh (autodownload)
+			header('Content-Type: text/csv; charset=utf-8');
+			header('Content-Disposition: attachment; filename=data-'.$portal.'-'.$type.'-'.$param.'.csv');
 
-		// Create a file pointer connected to the output stream
-		$output = fopen('php://output', 'w');
+			for ($i=0; $i < count($result); $i++)
+				$merger[$i] = implode(',', $result[$i]);
 
-		// Header kolom
-		fputcsv($output, array('organisasi', 'dataset', 'group', 'tanggal_unggah', 'waktu_unggah', 'uri'));
+			// Create a file pointer connected to the output stream
+			$output = fopen('php://output', 'w');
 
-		// Konten CSV
-		foreach ($merger as $line)
-			fputcsv($output, explode(',', $line));		
-	}
+			// Header kolom
+			fputcsv($output, array('organisasi', 'dataset', 'group', 'tanggal_unggah', 'waktu_unggah', 'uri'));
 
-	private function _rename_title($title)
-	{
-		return ucwords(strtolower(str_replace('-', ' ', $title)));
+			// Konten CSV
+			foreach ($merger as $line)
+				fputcsv($output, explode(',', $line));
+		}
+		else
+		{
+			return FALSE;
+		}
 	}
 
 	public function export_axis($axis, $data)
