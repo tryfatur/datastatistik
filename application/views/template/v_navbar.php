@@ -9,7 +9,9 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</button>
-				<a class="navbar-brand" href="<?= base_url(); ?>">Indonesia Open Data Portal Statistics</a>
+				<a class="navbar-brand" href="<?= base_url(); ?>">
+					<i class="fa fa-fw fa-bar-chart"></i> Indonesia Open Data Portal Statistics
+				</a>
 			</div>
 		
 			<!-- Collect the nav links, forms, and other content for toggling -->
@@ -18,6 +20,7 @@
 					<li><a href="<?= base_url() ?>">BERANDA</a></li>
 					<li><a href="#">ISTILAH</a></li>
 					<li><a href="#">CARA KERJA</a></li>
+					<li><a href="<?= base_url('start/unduh') ?>">UNDUH</a></li>
 					<li><a href="https://github.com/tryfatur/datastatistik">TENTANG</a></li>
 				</ul>
 			</div><!-- /.navbar-collapse -->

@@ -2,7 +2,10 @@
 	<div class="col-sm-1">
 		<img src="<?= $meta['icon'] ?>" style="height: 48px">
 	</div>
-	<h1><?= $meta['portal_title'] ?><small> (<a href="<?= $meta['url'] ?>" target="_blank"><?= $meta['url'] ?></a>)</small></h1>
+	<h1>
+		<?= $meta['portal_title'] ?><small> (<a href="<?= $meta['url'] ?>" target="_blank"><?= $meta['url'] ?></a>)</small>
+		<button class="btn btn-success btn-lg pull-right"><i class="fa fa-fw fa-download"></i> unduh data</button>
+	</h1>
 </div>
 <div class="row text-center">
 	<div class="col-md-4">
@@ -54,6 +57,7 @@
 		<i class="fa fa-fw fa-eye"></i> Lihat Statistik Lebih Detail
 	</a>
 </div>
+<hr>
 
 <div class="modal fade" id="topten-org">
 	<div class="modal-dialog">

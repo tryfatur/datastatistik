@@ -25,7 +25,7 @@
 		<hr>
 		<div class="container">
 			<div class="text-muted text-right">
-				<p>@tryfatur &#149; Indonesia Open Data Statistics &#149; 2016</p>
+				<p>@tryfatur &#149; Indonesia Open Data Portal Statistics &#149; 2016</p>
 			</div>
 		</div>
 		

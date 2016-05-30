@@ -94,6 +94,21 @@ class Start extends CI_Controller
 		$this->load->view('template/v_base_template', $data);
 	}
 
+	public function unduh()
+	{
+		$data['content'] = $this->load->view('v_unduh', '', TRUE);
+
+		$this->load->view('template/v_base_template', $data);
+	}
+
+	public function unduh_data()
+	{
+		$unduh = $this->input->post('unduh');
+
+		if (isset($unduh))
+			$this->statistik->export_csv($unduh['portal'], $unduh['jenis'], $unduh['data']);
+	}
+
 	public function page_404() 
 	{
 		$this->output->set_status_header('404'); 

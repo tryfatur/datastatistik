@@ -41,7 +41,7 @@
   background-color: #ffffff;
 }
 .navbar-blue .navbar-toggle .icon-bar {
-  background-color: #999999;
+  background-color: #3E7CBF;
 }
 .navbar-blue .navbar-collapse,
 .navbar-blue .navbar-form {
@@ -95,14 +95,35 @@ fieldset[disabled] .navbar-blue .btn-link:focus {
   color: #eeeeee;
 }
 
-#datasetList {
-  cursor: pointer;
-}
-
-.dataTables_paginate {
+.dataTables_paginate, .dataTables_filter {
   float: right;
 }
 
 .page404 {
   color: #fff;
+}
+
+.navbar-toggle {
+  background-color: #ffffff;
+  border-radius: 0px;
+  margin-right: 10px;
+}
+
+.navbar-toggle:hover, .navbar-toggle:active, {
+  background-color: #eeeeee;
+}
+
+@media (max-width: 320px) {
+  .navbar-brand {
+    font-size: 11px;
+  }
+}
+
+#datasetList > tbody > tr > td > a {
+  text-decoration: none;
+  color: #555555;
+}
+
+#datasetList > tbody > tr > td > a:hover {
+  text-decoration: underline;
 }

@@ -34,15 +34,17 @@
 	<thead>
 		<th>No</th>
 		<th>Dataset</th>
+		<th>Grup</th>
 		<th>Tanggal Unggah</th>
 		<th>Waktu Unggah</th>
 	</thead>
 	<tbody>
 	<?php $i = 1; ?>
 	<?php foreach ($dataset_list as $key => $value): ?>
-		<tr id="#datasetData">
+		<tr>
 			<td align="center"><?= $i ?></td>
-			<td><?=$value['name'] ?></td>
+			<td><a href="<?= $meta['url'].'/dataset/'.$value['uri'] ?>" target="_blank"><?=$value['name'] ?></a></td>
+			<td><?= $value['groups'] ?></td>
 			<td align="center"><?= $this->statistik->indonesian_date($value['date_created'])?></td>
 			<td align="center"><?=$value['time_created'] ?></td>
 		</tr>
@@ -57,16 +59,14 @@
 	$('#datasetList').DataTable({
 		"language": {
 					"url": "//cdn.datatables.net/plug-ins/1.10.11/i18n/Indonesian.json"
-				},
-		"searching" : false,
+				}
 	});
-
-	$('#datasetList_paginate').addClass('pull-right');
 
 	$(function () {
 		$('#detailStatistik').highcharts({
 			chart: {
-				type: 'column'
+				type: 'column',
+				style: { fontFamily: 'Asap'}
 			},
 			title: {
 				text: 'Aktivitas Pengunggahan Dataset ' + '<?= $result->display_name ?>'
