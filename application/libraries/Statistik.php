@@ -117,7 +117,11 @@ class Statistik
 
 	public function get_top_org()
 	{
-		$this->set_action('organization_list?sort=package_count%20desc&all_fields=true&limit=10');
+		if ($this->_portal_url == 'http://data.go.id')
+			$this->set_action('organization_list?sort=packages%20desc&all_fields=true&limit=10');
+		else
+			$this->set_action('organization_list?sort=package_count%20desc&all_fields=true&limit=10');
+
 		$result = $this->process_api();
 
 		if (count($result->result) > 10)
@@ -133,7 +137,11 @@ class Statistik
 
 	public function get_top_group()
 	{
-		$this->set_action('group_list?sort=package_count%20desc&all_fields=true&limit=10');
+		if ($this->_portal_url == 'http://data.go.id')
+			$this->set_action('group_list?sort=packages%20desc&all_fields=true&limit=10');
+		else
+			$this->set_action('group_list?sort=package_count%20desc&all_fields=true&limit=10');
+
 		$result = $this->process_api();
 
 		if (count($result->result) > 10)
@@ -150,32 +158,43 @@ class Statistik
 	public function dataset_list($param, $type)
 	{
 		if ($type == 'org')
-			$this->set_action('package_search?start=0&rows=200&sort=created%20desc&q=organization:'.$param);
+			$this->set_action('package_search?start=0&rows=318&sort=created%20desc&q=organization:'.$param);
 		else
-			$this->set_action('package_search?start=0&rows=200&sort=created%20desc&q=groups:'.$param);
+			$this->set_action('package_search?start=0&rows=157&sort=created%20desc&q=groups:'.$param);
 
 		$result = $this->process_api()->result;
 
 		if ($result->count > 0)
 		{
-			for ($i=0; $i < $result->count; $i++)
+			for ($i=0; $i < count($result->results); $i++)
 			{ 
 				for ($j=0; $j < count($result->results[$i]); $j++)
 				{
-					$created = explode('T', $result->results[$i]->resources[$j]->created);
-					$time = explode('.', $created[1]);
+					$data_created[$i]['org']  = $result->results[$i]->organization->title;
+					$data_created[$i]['name'] = trim($result->results[$i]->title);
 
-					$data_created[$i]['org']          = $result->results[$i]->organization->title;
-					$data_created[$i]['name']         = trim($result->results[$i]->title);
-					
+					// Jika dataset tidak memiliki grup
 					if (!empty($result->results[$i]->groups))
-						$data_created[$i]['groups']   = $result->results[$i]->groups[0]->title;
+						$data_created[$i]['groups'] = $result->results[$i]->groups[0]->title;
 					else
-						$data_created[$i]['groups']   = '';
+						$data_created[$i]['groups'] = '';
 
-					$data_created[$i]['date_created'] = $created[0];
-					$data_created[$i]['time_created'] = $time[0];
-					$data_created[$i]['uri']          = $result->results[$i]->name;
+					// Jika dataset tidak memiliki resource <- Aneh
+					if (!empty($result->results[$i]->resources))
+					{
+						$created = explode('T', $result->results[$i]->resources[$j]->created);
+						$time = explode('.', $created[1]);
+
+						$data_created[$i]['date_created'] = $created[0];
+						$data_created[$i]['time_created'] = $time[0];
+					}
+					else
+					{
+						$data_created[$i]['date_created'] = '';
+						$data_created[$i]['time_created'] = '';
+					}
+
+					$data_created[$i]['uri'] = $result->results[$i]->name;
 				}
 			}
 			return $data_created;
@@ -334,11 +353,20 @@ class Statistik
 
 		$result = $this->process_api()->result;
 
-		for ($i=0; $i < count($result); $i++)
-		{ 
-			if ($result[$i]->package_count > 0)
-			{
-				$list[] = $result[$i]->name;
+		if ($this->_portal_url == 'http://data.go.id')
+		{
+			for ($i=0; $i < count($result); $i++)
+			{ 
+				if ($result[$i]->packages > 0)
+					$list[] = $result[$i]->name;
+			}
+		}
+		else
+		{
+			for ($i=0; $i < count($result); $i++)
+			{ 
+				if ($result[$i]->package_count > 0)
+					$list[] = $result[$i]->name;
 			}
 		}
 
@@ -350,9 +378,7 @@ class Statistik
 		for ($i=0; $i < count($dataset_list) ; $i++)
 		{ 
 			for ($j=0; $j < count($dataset_list[$i]); $j++)
-			{ 
-				$merger[$i][$j] = implode(',', $dataset_list[$i][$j]);
-			}
+				$merger[$i][$j] = implode(';', $dataset_list[$i][$j]);
 		}
 
 		// Output headers, file CSV akan langsung di unduh (autodownload)
@@ -368,7 +394,7 @@ class Statistik
 		for ($i=0; $i < count($merger); $i++)
 		{
 			foreach ($merger[$i] as $line)
-				fputcsv($output, explode(',', $line));
+				fputcsv($output, explode(';', $line), ';');
 		}
 	}
 
@@ -377,8 +403,16 @@ class Statistik
 		for ($i=0; $i < count($data); $i++)
 			$xAxies[$i] = "'".$data[$i]->display_name."'";
 
-		for ($i=0; $i < count($data); $i++)
+		if ($this->_portal_url == 'http://data.go.id')
+		{
+			for ($i=0; $i < count($data); $i++)
+				$yAxies[$i] = $data[$i]->packages;
+		}
+		else
+		{
+			for ($i=0; $i < count($data); $i++)
 			$yAxies[$i] = $data[$i]->package_count;
+		}
 
 		if ($axis == 'x')
 			return implode(',', $xAxies);

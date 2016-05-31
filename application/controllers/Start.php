@@ -125,7 +125,54 @@ class Start extends CI_Controller
 	public function debug()
 	{
 		$this->load->library('statistik');
-		$this->statistik->set_portal('jakarta');
+		$this->statistik->set_portal('nasional');
+
+		// $this->statistik->set_action('organization_list?all_fields=true');
+		$this->statistik->set_action('package_search?start=0&rows=318&sort=created%20desc&q=organization:bojonegoro');
+
+		$result = $this->statistik->process_api()->result;
+
+		/*for ($i=0; $i < count($result); $i++)
+		{ 
+			if ($result[$i]->packages > 0)
+				$list[] = $result[$i]->name;
+		}*/
+
+		for ($i=0; $i < count($result->results); $i++)
+		{ 
+			for ($j=0; $j < count($result->results[$i]); $j++)
+			{
+				$data_created[$i]['org']  = $result->results[$i]->organization->title;
+				$data_created[$i]['name'] = trim($result->results[$i]->title);
+
+				// Jika dataset tidak memiliki grup
+				if (!empty($result->results[$i]->groups))
+					$data_created[$i]['groups'] = $result->results[$i]->groups[0]->title;
+				else
+					$data_created[$i]['groups'] = '';
+
+				// Jika dataset tidak memiliki resource
+				if (!empty($result->results[$i]->resources))
+				{
+					$created = explode('T', $result->results[$i]->resources[$j]->created);
+					$time = explode('.', $created[1]);
+
+					$data_created[$i]['date_created'] = $created[0];
+					$data_created[$i]['time_created'] = $time[0];
+				}
+				else
+				{
+					$data_created[$i]['date_created'] = '';
+					$data_created[$i]['time_created'] = '';
+				}
+
+				$data_created[$i]['uri'] = $result->results[$i]->name;
+			}
+		}
+
+		echo "<pre>";
+		print_r ($data_created);
+		echo "</pre>";
 	}
 }
 

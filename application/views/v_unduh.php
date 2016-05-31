@@ -11,7 +11,7 @@
 	</li>
 </ul>
 <div id="downloadTabContent" class="tab-content">
-	<div class="tab-pane fade" id="singleDownload">
+	<div class="tab-pane fade active in" id="singleDownload">
 		<div class="page-header">
 			<h1><i class="fa fa-fw fa-file"></i> Unduh Data Per Organisasi/Grup</h1>
 		</div>
@@ -52,7 +52,7 @@
 			</div>
 		</form>
 	</div>
-	<div class="tab-pane fade active in" id="bulkDownload">
+	<div class="tab-pane fade" id="bulkDownload">
 		<div class="page-header">
 			<h1><i class="fa fa-fw fa-suitcase"></i> Unduh Data Gabungan</h1>
 		</div>
@@ -95,19 +95,19 @@
 	$('#bulkButton').attr('disabled', 'disable');
 
 	function selectPortal(portal) {
-		var url;
+		var portal_url;
 		var action;
 
 		if (portal == 'bandung') {
-			url = 'http://data.bandung.go.id/api/3/action/';
+			portal_url = 'http://data.bandung.go.id/api/3/action/';
 		}
 
 		if (portal == 'jakarta') {
-			url = 'http://data.jakarta.go.id/api/3/action/';
+			portal_url = 'http://data.jakarta.go.id/api/3/action/';
 		}
 
 		if (portal == 'nasional') {
-			url = 'http://data.go.id/api/3/action/';
+			portal_url = 'http://data.go.id/api/3/action/';
 		}
 
 		$('#jenis').empty();
@@ -118,17 +118,31 @@
 		$('#jenis').on('change', function () {
 			$.ajax({
 				dataType: "jsonp",
-				url: url + this.value + '?all_fields=true',
+				url: portal_url + this.value + '?all_fields=true',
 				success: function(data) {
+					console.log(this.url);
 					$('#data').empty();
 					$('#data').append('<option value="">-- Pilih Organisasi/Grup --</option>');
-					$.each(data.result, function (i, val) {
-						if (val.package_count > 0) {
-							$('#data').append(
-								'<option value="' + val.name + '">' + val.title + '</option>'
-							);
-						}
-					});
+
+					if (portal == 'nasional') {
+						$.each(data.result, function (i, val) {
+							if (val.packages > 0) {
+								$('#data').append(
+									'<option value="' + val.name + '">' + val.title + '</option>'
+								);
+							}
+						});
+					}
+					else
+					{
+						$.each(data.result, function (i, val) {
+							if (val.package_count > 0) {
+								$('#data').append(
+									'<option value="' + val.name + '">' + val.title + '</option>'
+								);
+							}
+						});
+					}
 				}
 			});
 		});
