@@ -327,18 +327,19 @@ class Statistik
 			header('Content-Type: text/csv; charset=utf-8');
 			header('Content-Disposition: attachment; filename=data-'.$portal.'-'.$type.'-'.$param.'.csv');
 
-			for ($i=0; $i < count($result); $i++)
-				$merger[$i] = implode(',', $result[$i]);
-
 			// Create a file pointer connected to the output stream
 			$output = fopen('php://output', 'w');
 
 			// Header kolom
 			fputcsv($output, array('organisasi', 'dataset', 'group', 'tanggal_unggah', 'waktu_unggah', 'uri'));
 
+			// Menggabungkan elemen array
+			for ($i=0; $i < count($result); $i++)
+				$merger[$i] = implode(';', $result[$i]);
+
 			// Konten CSV
 			foreach ($merger as $line)
-				fputcsv($output, explode(',', $line));
+				fputcsv($output, explode(';', $line), ';');
 		}
 		else
 		{
