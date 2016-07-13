@@ -1,7 +1,7 @@
 # Indonesia Open Data Portal Statistic
 > Indonesia Open Data Portal Statistic adalah sebuah platform untuk melihat statistik dari portal keterbukaan data oleh pemerintah Indonesia. 
 
-![Beranda](https://raw.githubusercontent.com/tryfatur/datastatistik/master/assets/img/screenshots_01.png =250x)
+![Beranda](https://raw.githubusercontent.com/tryfatur/datastatistik/master/assets/img/screenshots_01.png)
 
 Sampai saat ini, platform ini baru bisa mengelola 3 portal data, yaitu Indonesia (Nasional - One Data Indonesia), 
 Pemerintah Kota Bandung (Open Data Bandung) dan Pemerintah Provinsi DKI Jakarta (Open Data Jakarta).
