@@ -170,8 +170,9 @@ class Statistik
 			{ 
 				for ($j=0; $j < count($result->results[$i]); $j++)
 				{
-					$data_created[$i]['org']  = $result->results[$i]->organization->title;
-					$data_created[$i]['name'] = trim($result->results[$i]->title);
+					$data_created[$i]['org']     = $result->results[$i]->organization->title;
+					$data_created[$i]['name']    = trim($result->results[$i]->title);
+					$data_created[$i]['org_uri'] = $result->results[$i]->organization->name;
 
 					// Jika dataset tidak memiliki grup
 					if (!empty($result->results[$i]->groups))
@@ -323,23 +324,12 @@ class Statistik
 
 		if (is_array($result))
 		{
-			// Output headers, file CSV akan langsung di unduh (autodownload)
-			header('Content-Type: text/csv; charset=utf-8');
-			header('Content-Disposition: attachment; filename=data-'.$portal.'-'.$type.'-'.$param.'.csv');
-
-			// Create a file pointer connected to the output stream
-			$output = fopen('php://output', 'w');
-
-			// Header kolom
-			fputcsv($output, array('organisasi', 'dataset', 'group', 'tanggal_unggah', 'waktu_unggah', 'uri'));
-
-			// Menggabungkan elemen array
 			for ($i=0; $i < count($result); $i++)
-				$merger[$i] = implode(';', $result[$i]);
+				$merger[$i] = implode(',', $result[$i]);
 
-			// Konten CSV
-			foreach ($merger as $line)
-				fputcsv($output, explode(';', $line), ';');
+			$filename = 'data-'.$portal.'-'.$type.'-'.$param;
+
+			$this->_generate_csv($merger, $filename);
 		}
 		else
 		{
@@ -376,26 +366,39 @@ class Statistik
 		for ($i=0; $i < count($list); $i++)
 			$dataset_list[] = $this->dataset_list($list[$i], $type);
 
-		for ($i=0; $i < count($dataset_list) ; $i++)
+		for ($i=0; $i < count($dataset_list); $i++)
 		{ 
 			for ($j=0; $j < count($dataset_list[$i]); $j++)
 				$merger[$i][$j] = implode(';', $dataset_list[$i][$j]);
 		}
 
+		$filename = 'data-'.$type.'-'.$portal;
+
+		$this->_generate_csv($merger, $filename, true);
+	}
+
+	private function _generate_csv($data, $filename, $bulk = false)
+	{
 		// Output headers, file CSV akan langsung di unduh (autodownload)
 		header('Content-Type: text/csv; charset=utf-8');
-		header('Content-Disposition: attachment; filename=data-'.$type.'-'.$portal.'.csv');
+		header('Content-Disposition: attachment; filename='.$filename.'.csv');
 
-		// Create a file pointer connected to the output stream
-		$output = fopen('php://output', 'w');
+		$output = fopen('php://output', 'w'); // Create a file pointer connected to the output stream
 
-		// Header kolom
-		fputcsv($output, array('organisasi', 'dataset', 'group', 'tanggal_unggah', 'waktu_unggah', 'uri'));
+		fputcsv($output, array('organisasi', 'dataset', 'group', 'tanggal_unggah', 'waktu_unggah', 'uri')); // Header kolom
 
-		for ($i=0; $i < count($merger); $i++)
+		if ($bulk)
 		{
-			foreach ($merger[$i] as $line)
-				fputcsv($output, explode(';', $line), ';');
+			for ($i=0; $i < count($data); $i++)
+			{
+				foreach ($data[$i] as $line)
+					fputcsv($output, explode(';', $line), ';');
+			}
+		}
+		else
+		{
+			foreach ($data as $line)
+				fputcsv($output, explode(',', $line));
 		}
 	}
 

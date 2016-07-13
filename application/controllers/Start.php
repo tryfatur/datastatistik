@@ -94,6 +94,12 @@ class Start extends CI_Controller
 		$this->load->view('template/v_base_template', $data);
 	}
 
+	public function visualisasi()
+	{
+		$data['content'] = '';
+		$this->load->view('template/v_base_template', $data);
+	}
+
 	public function unduh()
 	{
 		$data['content'] = $this->load->view('v_unduh', '', TRUE);
@@ -124,8 +130,34 @@ class Start extends CI_Controller
 
 	public function debug()
 	{
-		$this->load->library('statistik');
-		$this->statistik->set_portal('nasional');
+		$this->statistik->set_portal('bandung');
+		$this->statistik->set_action('organization_list?all_fields=true');
+		$result = $this->statistik->process_api()->result;
+
+		for ($i=0; $i < count($result); $i++)
+		{ 
+			if ($result[$i]->package_count > 0)
+				$list[] = $result[$i]->name;
+		}
+
+		for ($i=0; $i < count($list); $i++)
+			$dataset_list[] = $this->statistik->dataset_list($list[$i], 'org');
+
+		for ($i=0; $i < count($dataset_list); $i++)
+		{ 
+			for ($j=0; $j < count($dataset_list[$i]); $j++)
+			{ 
+				//$data[$i][$j]['org_uri'] = $dataset_list[$i][$j]['org_uri'];
+				$month = explode('-', $dataset_list[$i][$j]['date_created']); // Memisahkan tahun, bulan dan hari
+				//$data[$dataset_list[$i][$j]['org_uri']][$j] = $month[0].'-'.$month[1];
+				$data[$i][$j] = $month[0].'-'.$month[1];
+				$ahay[$i] = array_count_values($data[$i]);
+			}
+		}
+
+		echo "<pre>";
+		print_r ($ahay);
+		echo "</pre>";
 	}
 }
 
