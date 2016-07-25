@@ -18,7 +18,7 @@
 			<div class="collapse navbar-collapse navbar-ex1-collapse">
 				<ul class="nav navbar-nav navbar-right">
 					<li><a href="<?= base_url() ?>">BERANDA</a></li>
-					<li><a href="<?= base_url('start/visualisasi') ?>">VISUALISASI</a></li>
+					<li><a href="#">VISUALISASI</a></li>
 					<li><a href="<?= base_url('start/unduh') ?>">UNDUH</a></li>
 					<li><a href="https://github.com/tryfatur/datastatistik">TENTANG</a></li>
 				</ul>

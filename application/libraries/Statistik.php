@@ -315,7 +315,7 @@ class Statistik
 		return $new_array;
 	}
 
-	public function export_csv($portal, $type, $param)
+	public function export($portal, $type, $param, $format = 'csv')
 	{
 		($type == 'group_list') ? $type = 'group' : $type = 'org';
 
@@ -324,12 +324,19 @@ class Statistik
 
 		if (is_array($result))
 		{
-			for ($i=0; $i < count($result); $i++)
-				$merger[$i] = implode(',', $result[$i]);
+			if ($format == 'json')
+			{
+				return json_encode($result);
+			}
+			else
+			{
+				for ($i=0; $i < count($result); $i++)
+					$merger[$i] = implode(';', $result[$i]);
+				
+				$filename = 'data-'.$portal.'-'.$type.'-'.$param;
 
-			$filename = 'data-'.$portal.'-'.$type.'-'.$param;
-
-			$this->_generate_csv($merger, $filename);
+				$this->_generate_csv($merger, $filename);
+			}
 		}
 		else
 		{
@@ -337,7 +344,7 @@ class Statistik
 		}
 	}
 
-	public function export_csv_bulk($portal, $type)
+	public function export_bulk($portal, $type, $format = 'csv')
 	{
 		$this->set_portal($portal);
 		$this->set_action($type.'?all_fields=true');
@@ -372,9 +379,16 @@ class Statistik
 				$merger[$i][$j] = implode(';', $dataset_list[$i][$j]);
 		}
 
-		$filename = 'data-'.$type.'-'.$portal;
+		if ($format == 'json')
+		{
+			return json_encode($dataset_list);
+		}
+		else
+		{
+			$filename = 'data-'.$type.'-'.$portal;
 
-		$this->_generate_csv($merger, $filename, true);
+			$this->_generate_csv($merger, $filename, true);
+		}
 	}
 
 	private function _generate_csv($data, $filename, $bulk = false)
@@ -385,7 +399,7 @@ class Statistik
 
 		$output = fopen('php://output', 'w'); // Create a file pointer connected to the output stream
 
-		fputcsv($output, array('organisasi', 'dataset', 'group', 'tanggal_unggah', 'waktu_unggah', 'uri')); // Header kolom
+		fputcsv($output, array('organisasi', 'dataset', 'uri_org', 'group', 'tanggal_unggah', 'waktu_unggah', 'uri'), ';'); // Header kolom
 
 		if ($bulk)
 		{

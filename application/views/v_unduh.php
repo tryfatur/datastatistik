@@ -46,8 +46,16 @@
 				</div>
 			</div>
 			<div class="form-group">
-				<div class="col-sm-offset-2 col-sm-10">
-					<button id="downloadButton" type="submit" class="btn btn-success btn-lg pull-right"><i class="fa fa-fw fa-download"></i> Unduh Data</button>
+				<div class="col-sm-8"></div>
+				<div class="col-sm-2">
+					<a href="#" target="_blank" id="apiDataSingle" class="btn btn-success btn-lg pull-right">
+						<i class="fa fa-fw fa-code"></i> API Data
+					</a>
+				</div>
+				<div class="col-sm-2">
+					<button id="downloadButton" type="submit" class="btn btn-success btn-lg pull-right">
+						<i class="fa fa-fw fa-download"></i> Unduh Data
+					</button>
 				</div>
 			</div>
 		</form>
@@ -79,8 +87,16 @@
 				</div>
 			</div>
 			<div class="form-group">
-				<div class="col-sm-offset-2 col-sm-10">
-					<button id="bulkButton" type="submit" class="btn btn-success btn-lg pull-right"><i class="fa fa-fw fa-download"></i> Unduh Data</button>
+				<div class="col-sm-8"></div>
+				<div class="col-sm-2">
+					<a href="#" target="_blank" id="apiData" class="btn btn-success btn-lg pull-right">
+						<i class="fa fa-fw fa-code"></i> API Data
+					</a>
+				</div>
+				<div class="col-sm-2">
+					<button id="bulkButton" type="submit" class="btn btn-success btn-lg pull-right">
+						<i class="fa fa-fw fa-download"></i> Unduh Data
+					</button>
 				</div>
 			</div>
 		</form>
@@ -93,6 +109,8 @@
 	$('#data').attr('disabled', 'disable');
 	$('#jenisGabung').attr('disabled', 'disable');
 	$('#bulkButton').attr('disabled', 'disable');
+	$('#apiDataSingle').hide();
+	$('#apiData').hide();
 
 	function selectPortal(portal) {
 		var portal_url;
@@ -164,6 +182,14 @@
 	$('#data').change(function () {
 		if ($('#data').val()) {
 			$('#downloadButton').removeAttr('disabled');
+			$('#apiDataSingle').show();
+
+			var portal = $('#portal').val();
+			var jenis = $('#jenis').val();
+			var data = $('#data').val();
+
+
+			$('#apiDataSingle').attr('href', 'api/' + portal + '/' + jenis + '/' + data);
 		}
 	});
 
@@ -176,6 +202,13 @@
 	$('#jenisGabung').change(function () {
 		if ($('#jenisGabung').val()) {
 			$('#bulkButton').removeAttr('disabled');
+			$('#apiData').show();
+
+			var portal = $('#portalGabung').val();
+			var jenis = $('#jenisGabung').val();
+
+
+			$('#apiData').attr('href', 'api/' + 'bulk/' + portal + '/' + jenis);
 		}
 	});
 </script>

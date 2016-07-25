@@ -75,14 +75,14 @@
 				text: 'Sumber: <a href="<?= $meta['url'] ?>"><?= $meta['portal_title'] ?></a>'
 			},
 			plotOptions: {
-	            line: {
-	                dataLabels: {
-	                    enabled: true
-	                },
-	                enableMouseTracking: false
-	            }
-	        },
-	        xAxis: {
+				line: {
+					dataLabels: {
+						enabled: true
+					},
+					enableMouseTracking: false
+				}
+			},
+			xAxis: {
 				categories: [<?= $detail_org_x; ?>],
 			},
 			yAxis: {

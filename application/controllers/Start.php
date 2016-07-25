@@ -20,7 +20,6 @@ class Start extends CI_Controller
 	public function statistik()
 	{
 		$portal = $this->uri->segment(3);
-
 		$status = $this->statistik->portal_status($portal);
 
 		if ($status)
@@ -107,16 +106,30 @@ class Start extends CI_Controller
 		$this->load->view('template/v_base_template', $data);
 	}
 
+	public function api()
+	{
+		$uri_3 = $this->uri->segment(3);
+
+		if ($uri_3 == 'bulk')
+			$result = $this->statistik->export_bulk($this->uri->segment(4), $this->uri->segment(5), 'json');
+		else
+			$result = $this->statistik->export($this->uri->segment(3), $this->uri->segment(4), $this->uri->segment(5), 'json');
+
+		echo "<pre>";
+		print_r ($result);
+		echo "</pre>";
+	}
+
 	public function unduh_data()
 	{
 		$unduh_gabung = $this->input->post('unduh_gabung');
 		$unduh = $this->input->post('unduh');
 
 		if (isset($unduh))
-			$this->statistik->export_csv($unduh['portal'], $unduh['jenis'], $unduh['data']);
+			$this->statistik->export($unduh['portal'], $unduh['jenis'], $unduh['data']);
 
 		if (isset($unduh_gabung))
-			$this->statistik->export_csv_bulk($unduh_gabung['portal'], $unduh_gabung['jenis']);
+			$this->statistik->export_bulk($unduh_gabung['portal'], $unduh_gabung['jenis']);
 	}
 
 	public function page_404() 
@@ -130,30 +143,10 @@ class Start extends CI_Controller
 
 	public function debug()
 	{
-		$this->statistik->set_portal('bandung');
-		$this->statistik->set_action('organization_list?all_fields=true');
-		$result = $this->statistik->process_api()->result;
+		$ahay = $this->statistik->export_bulk('bandung', 'group_list', 'json');
 
-		for ($i=0; $i < count($result); $i++)
-		{ 
-			if ($result[$i]->package_count > 0)
-				$list[] = $result[$i]->name;
-		}
-
-		for ($i=0; $i < count($list); $i++)
-			$dataset_list[] = $this->statistik->dataset_list($list[$i], 'org');
-
-		for ($i=0; $i < count($dataset_list); $i++)
-		{ 
-			for ($j=0; $j < count($dataset_list[$i]); $j++)
-			{ 
-				//$data[$i][$j]['org_uri'] = $dataset_list[$i][$j]['org_uri'];
-				$month = explode('-', $dataset_list[$i][$j]['date_created']); // Memisahkan tahun, bulan dan hari
-				//$data[$dataset_list[$i][$j]['org_uri']][$j] = $month[0].'-'.$month[1];
-				$data[$i][$j] = $month[0].'-'.$month[1];
-				$ahay[$i] = array_count_values($data[$i]);
-			}
-		}
+		$ahay = json_encode($ahay);
+		
 
 		echo "<pre>";
 		print_r ($ahay);
