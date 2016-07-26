@@ -15,6 +15,7 @@ class Statistik
 		$this->ci =& get_instance();
 	}
 
+	/* Set portal data */
 	function set_portal($portal = 'bandung')
 	{
 		if ($portal == 'bandung')
@@ -26,12 +27,12 @@ class Statistik
 		if ($portal == 'nasional')
 			$this->_portal_url = 'http://data.go.id';
 
-		if ($portal == 'us')
-			$this->_portal_url = 'http://catalog.data.gov';
-
 		$this->_api_url = '/api/3/action/';
 	}
 
+	/*
+	 Memeriksa apakah API portal bisa di akses atau tidak
+	*/
 	public function portal_status($portal)
 	{
 		$this->set_portal($portal);
@@ -47,6 +48,9 @@ class Statistik
 		return TRUE;
 	}
 
+	/*
+		Data keterangan portal data
+	*/
 	public function portal_metadata($portal)
 	{
 		switch ($portal)
@@ -76,11 +80,17 @@ class Statistik
 		return $meta;
 	}
 
+	/*
+		Mengkonfirgurasi aksi yang akan di eksekusi
+	*/
 	public function set_action($action)
 	{
 		$this->_url_to_process = $this->_portal_url.$this->_api_url.$action;
 	}
 
+	/*
+		Memproses API berdasarkan URL
+	*/
 	public function process_api($url = '')
 	{
 		if (empty($url))
@@ -91,6 +101,9 @@ class Statistik
 		return json_decode($result);
 	}
 
+	/*
+		Mengambil jumlah total organisasi dalam sebuah portal
+	*/
 	public function total_org()
 	{
 		$this->set_action('organization_list');
@@ -99,6 +112,9 @@ class Statistik
 		return count($result->result);
 	}
 
+	/*
+		Mengambil jumlah total grup dalam sebuah portal
+	*/
 	public function total_group()
 	{
 		$this->set_action('group_list');
@@ -107,6 +123,9 @@ class Statistik
 		return count($result->result);
 	}
 
+	/*
+		Mengambil jumlah total dataset dalam sebuah portal
+	*/
 	public function total_package()
 	{
 		$this->set_action('package_list');
@@ -115,6 +134,9 @@ class Statistik
 		return count($result->result);
 	}
 
+	/*
+		Mengambil top ten org berdasarkan dataset
+	*/
 	public function get_top_org()
 	{
 		if ($this->_portal_url == 'http://data.go.id')
@@ -135,6 +157,9 @@ class Statistik
 		return $result->result;
 	}
 
+	/*
+		Mengambil top ten group berdasarkan dataset
+	*/
 	public function get_top_group()
 	{
 		if ($this->_portal_url == 'http://data.go.id')
@@ -155,6 +180,9 @@ class Statistik
 		return $result->result;
 	}
 
+	/*
+		Mengambil daftar dataset pada organisasi atau grup tertentu
+	*/
 	public function dataset_list($param, $type)
 	{
 		if ($type == 'org')
@@ -206,6 +234,9 @@ class Statistik
 		}
 	}
 
+	/*
+		Melihat aktifitas organisasi berdasarkan tanggal upload dataset
+	*/
 	public function aktifitas_organisasi($org, $axis)
 	{
 		$data = $this->dataset_list($org, 'org');
@@ -233,6 +264,9 @@ class Statistik
 		}
 	}
 
+	/*
+		Melihat aktifitas group berdasarkan tanggal upload dataset
+	*/
 	public function aktifitas_group($group, $axis)
 	{
 		$data = $this->dataset_list($group, 'group');
@@ -260,6 +294,9 @@ class Statistik
 		}
 	}
 
+	/*
+		Mengambil 5 dataset terakhir dari grup/organisasi tertentu
+	*/
 	public function latest_dataset($param, $type)
 	{
 		if ($type == 'org')
@@ -289,6 +326,9 @@ class Statistik
 		return $new_array;
 	}
 
+	/*
+		Mengambil 5 dataset terakhir dari portal tertentu
+	*/
 	public function latest_portal_dataset()
 	{
 		$this->set_action('current_package_list_with_resources?limit=5');
@@ -315,6 +355,9 @@ class Statistik
 		return $new_array;
 	}
 
+	/*
+		Mengeksport data portal berdasarkan grup/organisasi dan portal tertentu dalam format CSV atau JSON
+	*/
 	public function export($portal, $type, $param, $format = 'csv')
 	{
 		($type == 'group_list') ? $type = 'group' : $type = 'org';
@@ -344,6 +387,9 @@ class Statistik
 		}
 	}
 
+	/*
+		Mengeksport seluruh data portal berdasarkan grup/organisasi dan portal tertentu dalam format CSV atau JSON
+	*/
 	public function export_bulk($portal, $type, $format = 'csv')
 	{
 		$this->set_portal($portal);
@@ -391,6 +437,9 @@ class Statistik
 		}
 	}
 
+	/*
+		Meng-generate dokumen CSV
+	*/
 	private function _generate_csv($data, $filename, $bulk = false)
 	{
 		// Output headers, file CSV akan langsung di unduh (autodownload)
@@ -416,6 +465,9 @@ class Statistik
 		}
 	}
 
+	/*
+		Mengeksport sumbu x dan y untuk melihat aktifitas organisasi/grup
+	*/
 	public function export_axis($axis, $data)
 	{
 		for ($i=0; $i < count($data); $i++)
@@ -438,11 +490,9 @@ class Statistik
 			return implode(',', $yAxies);
 	}
 
-	public function split_created($created)
-	{
-		return explode('T', $created);
-	}
-
+	/*
+		Konversi tanggal ke format Indonesia
+	*/
 	public function indonesian_date($date)
 	{
 		$BulanIndo = array("Januari", "Februari", "Maret",
