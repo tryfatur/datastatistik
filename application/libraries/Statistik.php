@@ -204,9 +204,15 @@ class Statistik
 
 					// Jika dataset tidak memiliki grup
 					if (!empty($result->results[$i]->groups))
+					{
 						$data_created[$i]['groups'] = $result->results[$i]->groups[0]->title;
+						$data_created[$i]['groups_uri'] = strtolower(str_replace(' ', '-', $result->results[$i]->groups[0]->title));
+					}
 					else
+					{
 						$data_created[$i]['groups'] = '';
+						$data_created[$i]['groups_uri'] = '';
+					}
 
 					// Jika dataset tidak memiliki resource <- Aneh
 					if (!empty($result->results[$i]->resources))
@@ -506,7 +512,12 @@ class Statistik
 		
 		$result = $tgl . " " . $BulanIndo[(int)$bulan-1] . " ". $tahun;
 		return($result);
-	} 
+	}
+
+	public function split_created($date)
+	{
+		return explode('T', $date);
+	}
 }
 
 /* End of file Statistik.php */

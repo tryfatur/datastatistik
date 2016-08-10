@@ -132,6 +132,34 @@ class Start extends CI_Controller
 			$this->statistik->export_bulk($unduh_gabung['portal'], $unduh_gabung['jenis']);
 	}
 
+	public function chart_persentase()
+	{
+		$this->statistik->set_portal($this->uri->segment(3));
+		$data = $this->statistik->dataset_list($this->uri->segment(5), $this->uri->segment(4));
+
+		for ($i=0; $i < count($data); $i++)
+			$new_data[] = $data[$i]['groups'];
+
+		$x_data = array_count_values($new_data);
+		$total = count($data);
+
+		$i = 0;
+		foreach ($x_data as $key => $value)
+		{
+			if (!empty($key))
+				$a_data[$i]['name'] = $key;
+			else
+				$a_data[$i]['name'] = 'Lain-lain';
+
+			$persentase = ($value/$total) * 100;
+			$a_data[$i]['y'] = round($persentase, 2);
+
+			$i++;
+		}
+
+		echo json_encode($a_data);
+	}
+
 	public function page_404() 
 	{
 		$this->output->set_status_header('404'); 
@@ -143,13 +171,34 @@ class Start extends CI_Controller
 
 	public function debug()
 	{
-		$ahay = $this->statistik->export_bulk('bandung', 'group_list', 'json');
+		$org_name = 'kecamatan-bojongloa-kidul';
+		$this->statistik->set_portal('bandung');
+		$data = $this->statistik->dataset_list($org_name, 'org');
 
-		$ahay = json_encode($ahay);
-		
+		for ($i=0; $i < count($data); $i++)
+			$new_data[] = $data[$i]['groups'];
+
+		$x_data = array_count_values($new_data);
+		$total = count($data);
+
+		$i = 0;
+		foreach ($x_data as $key => $value)
+		{
+			if (!empty($key))
+				$a_data[$i]['name'] = $key;
+			else
+				$a_data[$i]['name'] = 'Lain-lain';
+
+			$persentase = ($value/$total) * 100;
+			$a_data[$i]['y'] = round($persentase, 2);
+
+			$i++;
+		}
+
+		$json = json_encode($a_data);
 
 		echo "<pre>";
-		print_r ($ahay);
+		print_r ($json);
 		echo "</pre>";
 	}
 }

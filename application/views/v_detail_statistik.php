@@ -10,7 +10,9 @@
 	</blockquote>
 	<p class="text-right">Bergabung sejak <?= $this->statistik->indonesian_date($created[0]) ?> &#149; <?= $result->package_count ?> dataset &#149; <?= $result->state ?></p>
 </div>
-<h2>5 Dataset Terakhir <?= $result->display_name.' '.$meta['title'] ?></h2>
+<div class="page-header">
+	<h2><i class="fa fa-fw fa-clock-o"></i>5 Dataset Terakhir <?= $result->display_name.' '.$meta['title'] ?></h2>
+</div>
 <div class="list-group">
 <?php for ($i=0; $i < count($latest_dataset); $i++): ?>
 	<a href="<?= $meta['url'].'/dataset/'.$latest_dataset[$i]['name'] ?>" class="list-group-item" target="_blank">
@@ -27,9 +29,30 @@
 	</a>
 <?php endfor; ?>
 </div>
+
 <hr>
-<div id="detailStatistik"></div>
+
+<?php if ($this->uri->segment(4) == 'org'): ?>
+	<div class="page-header">
+		<h2><i class="fa fa-fw fa-pie-chart"></i> Statistik</h2>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<div id="detailStatistik"></div>
+		</div>
+		<div class="col-md-6">
+			<div id="chartGrup"></div>
+		</div>
+	</div>
+<?php else: ?>
+	<div id="detailStatistik"></div>
+<?php endif ?>
+
 <hr>
+
+<div class="page-header">
+	<h2><i class="fa fa-fw fa-database"></i> Daftar Dataset</h2>
+</div>
 <table class="table table-bordered table-condensed" id="datasetList">
 	<thead>
 		<th>No</th>
@@ -53,6 +76,7 @@
 	</tbody>
 </table>
 
+<script src="<?= base_url('assets/js/uri.min.js') ?>"></script>
 <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script>
 <script>
@@ -62,6 +86,7 @@
 				}
 	});
 
+	//Aktifitas Pengunggahan
 	$(function () {
 		$('#detailStatistik').highcharts({
 			chart: {
@@ -98,6 +123,54 @@
 				name: 'Jumlah Dataset yang diunggah',
 				data: [<?= $detail_org_y ?>]
 			}]
+		});
+	});
+
+	//Sebaran Grup Dataset
+	$(function () {
+		$(document).ready(function () {
+			var render = 'chartGrup';
+			var options = {
+				chart: {
+					renderTo: render,
+					plotBackgroundColor: null,
+					plotBorderWidth: null,
+					plotShadow: false,
+					type: 'pie',
+					style: { fontFamily: 'Asap'}
+				},
+				title: {
+					text: 'Sebaran Grup Dataset ' + '<?= $result->display_name ?>'
+				},
+				subtitle: {
+					text: 'Sumber: <a href="<?= $meta['url'] ?>"><?= $meta['portal_title'] ?></a>'
+				},
+				tooltip: {
+					pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+				},
+				plotOptions: {
+					pie: {
+						allowPointSelect: true,
+						cursor: 'pointer',
+						dataLabels: {
+							enabled: false
+						},
+						showInLegend: true
+					}
+				},
+				series: [{
+					name: 'Total',
+					colorByPoint: true
+				}]
+			};
+
+			var active_url = window.location.toString();
+
+			var url = active_url.replace(/detail/, 'chart_persentase')
+			$.getJSON(url, function (data) {
+				 options.series[0].data = data;
+				 var chart = new Highcharts.Chart(options);
+			});
 		});
 	});
 </script>
