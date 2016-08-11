@@ -171,35 +171,7 @@ class Start extends CI_Controller
 
 	public function debug()
 	{
-		$org_name = 'kecamatan-bojongloa-kidul';
-		$this->statistik->set_portal('bandung');
-		$data = $this->statistik->dataset_list($org_name, 'org');
-
-		for ($i=0; $i < count($data); $i++)
-			$new_data[] = $data[$i]['groups'];
-
-		$x_data = array_count_values($new_data);
-		$total = count($data);
-
-		$i = 0;
-		foreach ($x_data as $key => $value)
-		{
-			if (!empty($key))
-				$a_data[$i]['name'] = $key;
-			else
-				$a_data[$i]['name'] = 'Lain-lain';
-
-			$persentase = ($value/$total) * 100;
-			$a_data[$i]['y'] = round($persentase, 2);
-
-			$i++;
-		}
-
-		$json = json_encode($a_data);
-
-		echo "<pre>";
-		print_r ($json);
-		echo "</pre>";
+		
 	}
 }
 

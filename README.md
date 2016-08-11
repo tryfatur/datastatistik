@@ -11,7 +11,7 @@ Tujuan dari platform ini adalah untuk melihat statistik secara umum dari portal-
 Platform ini bekerja dengan mengakses API dari masing-masing portal. Dengan demikian, platform ini sama sekali tidak memiliki apalagi menggunakan database. Selengkapnya mengenai dokumentasi API, bisa di lihat langsung pada link di bawah.
 
 # Platform System
-1. [Codeigniter] (https://codeigniter.com/) (PHP Framework) version 3.0.6
+1. [Codeigniter] (https://codeigniter.com/) (PHP Framework) version 3.1.0
 2. [Twitter Bootstrap] (https://getbootstrap.com/) (CSS Framework) version 3.3.6
 3. [FontAwesome] (http://fontawesome.io/) (CSS Icon Based) version 4.6.3
 4. [Datatables] (https://datatables.net) (Table plug-in for jQuery) version 1.10.12

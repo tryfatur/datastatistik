@@ -249,8 +249,11 @@ class Statistik
 
 		for ($i=0; $i < count($data); $i++)
 		{
-			$month = explode('-', $data[$i]['date_created']); // Memisahkan tahun, bulan dan hari
-			$date_created[] = $month[0].'-'.$month[1]; // Menggabungkan tahun dan bulan
+			if (!empty($data[$i]['date_created']))
+			{
+				$month = explode('-', $data[$i]['date_created']); // Memisahkan tahun, bulan dan hari
+				$date_created[] = $month[0].'-'.$month[1]; // Menggabungkan tahun dan bulan
+			}
 		}
 
 		$populated = array_count_values($date_created); // Pengelompokan berdasarkan tahun dan bulan
