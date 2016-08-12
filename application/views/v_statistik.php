@@ -57,6 +57,7 @@
 	</a>
 </div>
 <hr>
+<div id="pieGroup"></div>
 
 <div class="modal fade" id="topten-org">
 	<div class="modal-dialog">
@@ -139,7 +140,8 @@
 
 <script>
 	$(function () {
-		$('#top-org').highcharts({
+		var chartOrg, chartGroup;
+		var options = {
 			chart: {
 				style: { fontFamily: 'Asap'},
 				type: 'column',
@@ -151,19 +153,11 @@
 					viewDistance: 25
 				}
 			},
-			title: {
-				text: '10 Organisasi dengan Jumlah Dataset Terbanyak'
-			},
+			title: {},
 			subtitle: {
 				text: 'Sumber: <a href="<?= $meta['url']; ?>"><?= $meta['portal_title'] ?></a>'
 			},
-			plotOptions: {
-				column: {
-					depth: 25
-				}
-			},
-			xAxis: {
-				categories: [<?= $top_org_name ?>],
+			plotOptions: { column: { depth: 25 }
 			},
 			yAxis: {
 				min: 0,
@@ -171,48 +165,76 @@
 					text: 'Jumlah Dataset'
 				}
 			},
+			xAxis: {},
 			legend: {
 				enabled: false
 			},
 			series: [{
-				name: 'Jumlah Dataset',
-				data: [<?= $top_org_count ?>]
+				name: 'Jumlah Dataset'
 			}]
-		});
+		};
 
-		$('#top-group').highcharts({
+		options.chart.renderTo   = 'top-org';
+		options.title.text       = "10 Organisasi dengan Jumlah Dataset Terbanyak";
+		options.xAxis.categories = [<?= $top_org_name ?>];
+		options.series[0].data   = [<?= $top_org_count ?>];
+
+		chartOrg = new Highcharts.Chart(options);
+
+		options.chart.renderTo   = 'top-group';
+		options.title.text       = "10 Grup dengan Jumlah Dataset Terbanyak";
+		options.xAxis.categories = [<?= $top_group_name ?>];
+		options.series[0].data   = [<?= $top_group_count ?>];
+
+		chartGroup = new Highcharts.Chart(options);
+	});
+
+	$(function () {
+		var render = 'pieGroup';
+		var options = {
 			chart: {
-				type: 'column',
-				style: { fontFamily: 'Asap'},
-				options3d: {
-					enabled: true,
-					alpha: 20,
-					beta: 0,
-					depth: 100,
-					viewDistance: 25
-				}
+				renderTo: render,
+				plotBackgroundColor: null,
+				plotBorderWidth: null,
+				plotShadow: false,
+				type: 'pie',
+				style: { fontFamily: 'Asap'}
 			},
 			title: {
-				text: '10 Grup dengan Jumlah Dataset Terbanyak'
+				text: 'Sebaran Grup Dataset ' + '<?= $meta['portal_title'] ?>',
 			},
 			subtitle: {
-				text: 'Sumber: <a href="<?= $meta['url']; ?>"><?= $meta['portal_title'] ?></a>'
+				text: 'Sumber: <a href="<?= $meta['url'] ?>"><?= $meta['portal_title'] ?></a>',
 			},
-			xAxis: {
-				categories: [<?= $top_group_name ?>],
+			tooltip: {
+				pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
 			},
 			plotOptions: {
-				column: {
-					depth: 25
+				pie: {
+					allowPointSelect: true,
+					cursor: 'pointer',
+					dataLabels: {
+						enabled: false
+					},
+					showInLegend: true
 				}
 			},
-			legend: {
-				enabled: false
-			},
 			series: [{
-				name: 'Jumlah Dataset',
-				data: [<?= $top_group_count ?>],
+				name: 'Total',
+				colorByPoint: true
 			}]
+		};
+
+		var active_url = window.location.toString();
+
+		var url = active_url.replace('/statistik/', '/api/bulk/') + "/organization_list/statistik";
+		var chart = new Highcharts.Chart(options);
+		
+		chart.showLoading("Mengambil data...")
+		$.getJSON(url, function (data) {
+			 options.series[0].data = data;
+			 chart = new Highcharts.Chart(options);
+			 chart.hideLoading();
 		});
 	});
 </script>

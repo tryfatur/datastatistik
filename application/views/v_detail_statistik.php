@@ -76,7 +76,6 @@
 	</tbody>
 </table>
 
-<script src="<?= base_url('assets/js/uri.min.js') ?>"></script>
 <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script>
 <script>
@@ -128,49 +127,52 @@
 
 	//Sebaran Grup Dataset
 	$(function () {
-		$(document).ready(function () {
-			var render = 'chartGrup';
-			var options = {
-				chart: {
-					renderTo: render,
-					plotBackgroundColor: null,
-					plotBorderWidth: null,
-					plotShadow: false,
-					type: 'pie',
-					style: { fontFamily: 'Asap'}
-				},
-				title: {
-					text: 'Sebaran Grup Dataset ' + '<?= $result->display_name ?>'
-				},
-				subtitle: {
-					text: 'Sumber: <a href="<?= $meta['url'] ?>"><?= $meta['portal_title'] ?></a>'
-				},
-				tooltip: {
-					pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-				},
-				plotOptions: {
-					pie: {
-						allowPointSelect: true,
-						cursor: 'pointer',
-						dataLabels: {
-							enabled: false
-						},
-						showInLegend: true
-					}
-				},
-				series: [{
-					name: 'Total',
-					colorByPoint: true
-				}]
-			};
+		var render = 'chartGrup';
+		var options = {
+			chart: {
+				renderTo: render,
+				plotBackgroundColor: null,
+				plotBorderWidth: null,
+				plotShadow: false,
+				type: 'pie',
+				style: { fontFamily: 'Asap'}
+			},
+			title: {
+				text: 'Sebaran Grup Dataset ' + '<?= $result->display_name ?>'
+			},
+			subtitle: {
+				text: 'Sumber: <a href="<?= $meta['url'] ?>"><?= $meta['portal_title'] ?></a>'
+			},
+			tooltip: {
+				pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+			},
+			plotOptions: {
+				pie: {
+					allowPointSelect: true,
+					cursor: 'pointer',
+					dataLabels: {
+						enabled: false
+					},
+					showInLegend: true
+				}
+			},
+			series: [{
+				name: 'Total',
+				colorByPoint: true
+			}]
+		};
 
-			var active_url = window.location.toString();
+		var active_url = window.location.toString();
 
-			var url = active_url.replace(/detail/, 'chart_persentase')
-			$.getJSON(url, function (data) {
-				 options.series[0].data = data;
-				 var chart = new Highcharts.Chart(options);
-			});
+		var url = active_url.replace(/detail/, 'api') + "/statistik";
+		var chart = new Highcharts.Chart(options);
+
+		chart.showLoading("Mengambil data...");
+
+		$.getJSON(url, function (data) {
+			 options.series[0].data = data;
+			 chart = new Highcharts.Chart(options);
+			 chart.hideLoading();
 		});
 	});
 </script>

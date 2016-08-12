@@ -194,9 +194,11 @@ class Statistik
 
 		if ($result->count > 0)
 		{
-			for ($i=0; $i < count($result->results); $i++)
+			$total_results = (int)count($result->results);
+			for ($i=0; $i < $total_results; $i++)
 			{ 
-				for ($j=0; $j < count($result->results[$i]); $j++)
+				$total_results_array = (int)count($result->results[$i]);
+				for ($j=0; $j < $total_results_array; $j++)
 				{
 					$data_created[$i]['org']     = $result->results[$i]->organization->title;
 					$data_created[$i]['name']    = trim($result->results[$i]->title);
@@ -247,7 +249,8 @@ class Statistik
 	{
 		$data = $this->dataset_list($org, 'org');
 
-		for ($i=0; $i < count($data); $i++)
+		$total = (int)count($data);
+		for ($i=0; $i < $total; $i++)
 		{
 			if (!empty($data[$i]['date_created']))
 			{
@@ -280,7 +283,8 @@ class Statistik
 	{
 		$data = $this->dataset_list($group, 'group');
 
-		for ($i=0; $i < count($data); $i++)
+		$total = (int)count($data);
+		for ($i=0; $i < $total; $i++)
 		{
 			$month = explode('-', $data[$i]['date_created']); // Memisahkan tahun, bulan dan hari
 			$date_created[] = $month[0].'-'.$month[1]; // Menggabungkan tahun dan bulan
@@ -315,9 +319,11 @@ class Statistik
 
 		$result = $this->process_api()->result->results;
 
-		for ($i=0; $i < count($result); $i++)
+		$total_result = (int)count($result);
+		for ($i=0; $i < $total_result; $i++)
 		{ 
-			for ($j=0; $j < count($result[$i]); $j++)
+			$total_results_array = (int)count($result[$i]);
+			for ($j=0; $j < $total_results_array; $j++)
 			{
 				$date = explode('T', $result[$i]->resources[$j]->created);
 
@@ -344,9 +350,11 @@ class Statistik
 
 		$result = $this->process_api()->result;
 
-		for ($i=0; $i < count($result); $i++)
+		$total = (int)count($result);
+		for ($i=0; $i < $total; $i++)
 		{ 
-			for ($j=0; $j < count($result[$i]); $j++)
+			$total_results_array = (int)count($result[$i]);
+			for ($j=0; $j < $total_results_array; $j++)
 			{
 				$date = explode('T', $result[$i]->resources[$j]->created);
 
@@ -356,7 +364,7 @@ class Statistik
 				$new_array[$i]['format']     = $result[$i]->resources[$j]->format;
 				$new_array[$i]['date']       = $date[0];
 				$new_array[$i]['time']       = $date[1];
-				$new_array[$i]['org_title'] = $result[$i]->organization->title;
+				$new_array[$i]['org_title']  = $result[$i]->organization->title;
 				$new_array[$i]['org_name']   = $result[$i]->organization->name;
 			}
 		}
@@ -380,9 +388,14 @@ class Statistik
 			{
 				return json_encode($result);
 			}
+			elseif ($format == 'text')
+			{
+				return json_encode($this->sebaran_grup($result));
+			}
 			else
 			{
-				for ($i=0; $i < count($result); $i++)
+				$total = (int)count($result);
+				for ($i=0; $i < $total; $i++)
 					$merger[$i] = implode(';', $result[$i]);
 				
 				$filename = 'data-'.$portal.'-'.$type.'-'.$param;
@@ -406,9 +419,11 @@ class Statistik
 
 		$result = $this->process_api()->result;
 
-		if ($this->_portal_url == 'http://data.go.id')
+		$total = (int)count($result);
+
+		if ($portal == 'nasional')
 		{
-			for ($i=0; $i < count($result); $i++)
+			for ($i=0; $i < $total; $i++)
 			{ 
 				if ($result[$i]->packages > 0)
 					$list[] = $result[$i]->name;
@@ -416,7 +431,7 @@ class Statistik
 		}
 		else
 		{
-			for ($i=0; $i < count($result); $i++)
+			for ($i=0; $i < $total; $i++)
 			{ 
 				if ($result[$i]->package_count > 0)
 					$list[] = $result[$i]->name;
@@ -425,18 +440,25 @@ class Statistik
 
 		($type == 'group_list') ? $type = 'group' : $type = 'org';
 
-		for ($i=0; $i < count($list); $i++)
+		$total_list = (int)count($list);
+		for ($i=0; $i < $total_list; $i++)
 			$dataset_list[] = $this->dataset_list($list[$i], $type);
 
-		for ($i=0; $i < count($dataset_list); $i++)
+		$total_dataset_list = (int)count($dataset_list);
+		for ($i=0; $i < $total_dataset_list; $i++)
 		{ 
-			for ($j=0; $j < count($dataset_list[$i]); $j++)
+			$total_dataset_list_array = (int)count($dataset_list[$i]);
+			for ($j=0; $j < $total_dataset_list_array ; $j++)
 				$merger[$i][$j] = implode(';', $dataset_list[$i][$j]);
 		}
 
 		if ($format == 'json')
 		{
 			return json_encode($dataset_list);
+		}
+		elseif ($format == 'text')
+		{
+			return json_encode($this->sebaran_grup($dataset_list, 'bulk'));
 		}
 		else
 		{
@@ -461,7 +483,8 @@ class Statistik
 
 		if ($bulk)
 		{
-			for ($i=0; $i < count($data); $i++)
+			$total_data = (int)count($data);
+			for ($i=0; $i < $total_data; $i++)
 			{
 				foreach ($data[$i] as $line)
 					fputcsv($output, explode(';', $line), ';');
@@ -479,17 +502,18 @@ class Statistik
 	*/
 	public function export_axis($axis, $data)
 	{
-		for ($i=0; $i < count($data); $i++)
+		$total_data = (int)count($data);
+		for ($i=0; $i < $total_data; $i++)
 			$xAxies[$i] = "'".$data[$i]->display_name."'";
 
 		if ($this->_portal_url == 'http://data.go.id')
 		{
-			for ($i=0; $i < count($data); $i++)
+			for ($i=0; $i < $total_data; $i++)
 				$yAxies[$i] = $data[$i]->packages;
 		}
 		else
 		{
-			for ($i=0; $i < count($data); $i++)
+			for ($i=0; $i < $total_data; $i++)
 			$yAxies[$i] = $data[$i]->package_count;
 		}
 
@@ -497,6 +521,44 @@ class Statistik
 			return implode(',', $xAxies);
 		else
 			return implode(',', $yAxies);
+	}
+
+	public function sebaran_grup($data, $type = 'single')
+	{
+		$total_data = (int)count($data);
+		if ($type == 'bulk')
+		{
+			for ($i=0; $i < $total_data; $i++)
+			{
+				$total_data_array = (int)count($data[$i]);
+				for ($j=0; $j < $total_data_array; $j++)
+					$group_list[] = $data[$i][$j]['groups'];
+			}
+		}
+		else
+		{
+			for ($i=0; $i < $total_data; $i++)
+				$group_list[] = $data[$i]['groups'];
+		}
+
+		$x_data = array_count_values($group_list);
+		$total = count($group_list);
+
+		$i = 0;
+		foreach ($x_data as $key => $value)
+		{
+			if (!empty($key))
+				$a_data[$i]['name'] = $key;
+			else
+				$a_data[$i]['name'] = 'Lain-lain';
+
+			$persentase = ($value/$total) * 100;
+			$a_data[$i]['y'] = round($persentase, 2);
+
+			$i++;
+		}
+
+		return $a_data;
 	}
 
 	/*

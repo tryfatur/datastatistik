@@ -108,16 +108,24 @@ class Start extends CI_Controller
 
 	public function api()
 	{
-		$uri_3 = $this->uri->segment(3);
+		$segment_3 = $this->uri->segment(3);
 
-		if ($uri_3 == 'bulk')
-			$result = $this->statistik->export_bulk($this->uri->segment(4), $this->uri->segment(5), 'json');
+		if ($segment_3 == 'bulk')
+		{
+			if ($this->uri->segment(6) == 'statistik')
+				$result = $this->statistik->export_bulk($this->uri->segment(4), $this->uri->segment(5), 'text');
+			else
+				$result = $this->statistik->export_bulk($this->uri->segment(4), $this->uri->segment(5), 'json');
+		}
 		else
-			$result = $this->statistik->export($this->uri->segment(3), $this->uri->segment(4), $this->uri->segment(5), 'json');
+		{
+			if ($this->uri->segment(6) == 'statistik')
+				$result = $this->statistik->export($this->uri->segment(3), $this->uri->segment(4), $this->uri->segment(5), 'text');
+			else
+				$result = $this->statistik->export($this->uri->segment(3), $this->uri->segment(4), $this->uri->segment(5), 'json');
+		}
 
-		echo "<pre>";
-		print_r ($result);
-		echo "</pre>";
+		echo $result;
 	}
 
 	public function unduh_data()
@@ -130,34 +138,6 @@ class Start extends CI_Controller
 
 		if (isset($unduh_gabung))
 			$this->statistik->export_bulk($unduh_gabung['portal'], $unduh_gabung['jenis']);
-	}
-
-	public function chart_persentase()
-	{
-		$this->statistik->set_portal($this->uri->segment(3));
-		$data = $this->statistik->dataset_list($this->uri->segment(5), $this->uri->segment(4));
-
-		for ($i=0; $i < count($data); $i++)
-			$new_data[] = $data[$i]['groups'];
-
-		$x_data = array_count_values($new_data);
-		$total = count($data);
-
-		$i = 0;
-		foreach ($x_data as $key => $value)
-		{
-			if (!empty($key))
-				$a_data[$i]['name'] = $key;
-			else
-				$a_data[$i]['name'] = 'Lain-lain';
-
-			$persentase = ($value/$total) * 100;
-			$a_data[$i]['y'] = round($persentase, 2);
-
-			$i++;
-		}
-
-		echo json_encode($a_data);
 	}
 
 	public function page_404() 
