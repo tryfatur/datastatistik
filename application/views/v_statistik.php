@@ -23,26 +23,63 @@
 		<h3>Grup</h3>
 	</div>
 </div>
+
 <hr>
-<h2>5 Dataset Terbaru <?= $meta['portal_title'] ?></h2>
-<div class="list-group">
-<?php for ($i=0; $i < count($latest_dataset); $i++): ?>
-	<a href="<?= $meta['url'].'/dataset/'.$latest_dataset[$i]['name'] ?>" class="list-group-item active">
-		<h4 class="list-group-item-heading">
-			<?= $latest_dataset[$i]['title'] ?>
-			<small>
-				| <?= $this->statistik->indonesian_date($latest_dataset[$i]['date']); ?>
-				| <?= $latest_dataset[$i]['org_title'] ?>
-			</small>
-		</h4>
-		<p class="list-group-item-text">
-			<?= substr($latest_dataset[$i]['notes'], 0, 50) ?>...
-		</p>
-	</a>
-<?php endfor; ?>
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		<h3 class="panel-title">
+			<i class="fa fa-fw fa-calendar"></i> Aktifitas Pengunggahan Dataset
+		</h3>
+	</div>
+	<div class="panel-body">
+		<center>
+			<div id="cal-heatmap"></div>
+		</center>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-6">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					<i class="fa fa-fw fa-clock-o"></i> 5 Dataset Terbaru <?= $meta['portal_title'] ?>
+				</h3>
+			</div>
+			<div class="list-group">
+			<?php for ($i=0; $i < count($latest_dataset); $i++): ?>
+				<a href="<?= $meta['url'].'/dataset/'.$latest_dataset[$i]['name'] ?>" class="list-group-item">
+					<h4 class="list-group-item-heading">
+						<?= $latest_dataset[$i]['title'] ?>
+						<small>
+							| <?= $this->statistik->indonesian_date($latest_dataset[$i]['date']); ?>
+							| <?= $latest_dataset[$i]['org_title'] ?>
+						</small>
+					</h4>
+					<p class="list-group-item-text">
+						<?= substr($latest_dataset[$i]['notes'], 0, 50) ?>...
+					</p>
+				</a>
+			<?php endfor; ?>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					<i class="fa fa-fw fa-pie-chart"></i> Sebaran Grup Dataset <?= $meta['portal_title'] ?>
+				</h3>
+			</div>
+			<div class="panel-body">
+				<div id="pieGroup"></div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <hr>
+
 <div id="top-org"></div>
 <div class="text-center">
 	<a class="btn btn-primary" data-toggle="modal" href='#topten-org'>
@@ -56,8 +93,6 @@
 		<i class="fa fa-fw fa-eye"></i> Lihat Statistik Lebih Detail
 	</a>
 </div>
-<hr>
-<div id="pieGroup"></div>
 
 <div class="modal fade" id="topten-org">
 	<div class="modal-dialog">
@@ -121,7 +156,7 @@
 	</div>
 </div>
 
-<script src="<?= base_url('assets/js/countUp.js') ?>"></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/countupjs/1.7.1/countUp.min.js"></script>
 <script>
 	//countUp.js
 	var options = {
@@ -200,9 +235,7 @@
 				type: 'pie',
 				style: { fontFamily: 'Asap'}
 			},
-			title: {
-				text: 'Sebaran Grup Dataset ' + '<?= $meta['portal_title'] ?>',
-			},
+			title: {text:''},
 			subtitle: {
 				text: 'Sumber: <a href="<?= $meta['url'] ?>"><?= $meta['portal_title'] ?></a>',
 			},
@@ -227,7 +260,7 @@
 
 		var active_url = window.location.toString();
 
-		var url = active_url.replace('/statistik/', '/api/bulk/') + "/organization_list/statistik";
+		var url = active_url.replace('/statistik/', '/api/') + "/organization_list/sebaran-grup";
 		var chart = new Highcharts.Chart(options);
 		
 		chart.showLoading("Mengambil data...")
@@ -236,5 +269,25 @@
 			 chart = new Highcharts.Chart(options);
 			 chart.hideLoading();
 		});
+	});
+
+	var active_url = window.location.toString();
+	var url = active_url.replace('/statistik/', '/api/') + "/organization_list/aktifitas";
+	
+	var cal = new CalHeatMap();
+	cal.init({
+		domain: "month",
+		subDomain: "day",
+		range: 12,
+		cellSize: 13,
+		domainGutter: 10,
+		data: url,
+		displayLegend: true,
+		start: new Date(2016, 0),
+		minDate: new Date(2016, 0),
+		maxDate: new Date(2016, 12),
+		tooltip: true,
+		legend: [20, 40, 60, 80, 100],
+		legendHorizontalPosition: "right"
 	});
 </script>

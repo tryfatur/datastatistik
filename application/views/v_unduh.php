@@ -189,7 +189,7 @@
 			var data = $('#data').val();
 
 
-			$('#apiDataSingle').attr('href', 'api/' + portal + '/' + jenis + '/' + data);
+			$('#apiDataSingle').attr('href', 'api/' + portal + '/' + jenis + '/unduh/' + data);
 		}
 	});
 

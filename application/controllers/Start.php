@@ -72,8 +72,6 @@ class Start extends CI_Controller
 			$data['result']         = $this->statistik->process_api()->result;
 			$data['dataset_list']   = $this->statistik->dataset_list($org_name, 'org');
 			$data['latest_dataset'] = $this->statistik->latest_dataset($org_name, 'org');
-			$data['detail_org_x']   = $this->statistik->aktifitas_organisasi($org_name, 'x');
-			$data['detail_org_y']   = $this->statistik->aktifitas_organisasi($org_name, 'y');
 		}
 
 		if ($this->uri->segment(4) == 'group')
@@ -84,8 +82,6 @@ class Start extends CI_Controller
 			$data['result']         = $this->statistik->process_api()->result;
 			$data['dataset_list']   = $this->statistik->dataset_list($group_name, 'group');
 			$data['latest_dataset'] = $this->statistik->latest_dataset($group_name, 'group');
-			$data['detail_org_x']   = $this->statistik->aktifitas_group($group_name, 'x');
-			$data['detail_org_y']   = $this->statistik->aktifitas_group($group_name, 'y');
 		}
 
 		$data['content']      = $this->load->view('v_detail_statistik', $data, TRUE);
@@ -108,24 +104,20 @@ class Start extends CI_Controller
 
 	public function api()
 	{
-		$segment_3 = $this->uri->segment(3);
+		$portal        = $this->uri->segment(3);
+		$datasource    = $this->uri->segment(4);
+		$api_type      = $this->uri->segment(5);
+		$org_grup_name = $this->uri->segment(6);
 
-		if ($segment_3 == 'bulk')
-		{
-			if ($this->uri->segment(6) == 'statistik')
-				$result = $this->statistik->export_bulk($this->uri->segment(4), $this->uri->segment(5), 'text');
-			else
-				$result = $this->statistik->export_bulk($this->uri->segment(4), $this->uri->segment(5), 'json');
-		}
+		// api/{portal}/{org | group}/{sebaran-grup | aktifitas | unduh}/{nama_org}
+		// api/{portal}/{org | group}/{sebaran-grup | aktifitas | unduh}
+
+		if (isset($org_grup_name))
+			$data = $this->statistik->export($portal, $datasource, $api_type, $org_grup_name, 'json');
 		else
-		{
-			if ($this->uri->segment(6) == 'statistik')
-				$result = $this->statistik->export($this->uri->segment(3), $this->uri->segment(4), $this->uri->segment(5), 'text');
-			else
-				$result = $this->statistik->export($this->uri->segment(3), $this->uri->segment(4), $this->uri->segment(5), 'json');
-		}
+			$data = $this->statistik->export_bulk($portal, $datasource, $api_type, 'json');
 
-		echo $result;
+		echo $data;
 	}
 
 	public function unduh_data()
@@ -134,10 +126,10 @@ class Start extends CI_Controller
 		$unduh = $this->input->post('unduh');
 
 		if (isset($unduh))
-			$this->statistik->export($unduh['portal'], $unduh['jenis'], $unduh['data']);
+			$this->statistik->export($unduh['portal'], $unduh['jenis'], 'unduh', $unduh['data']);
 
 		if (isset($unduh_gabung))
-			$this->statistik->export_bulk($unduh_gabung['portal'], $unduh_gabung['jenis']);
+			$this->statistik->export_bulk($unduh_gabung['portal'], $unduh_gabung['jenis'], 'unduh');
 	}
 
 	public function page_404() 
@@ -151,7 +143,25 @@ class Start extends CI_Controller
 
 	public function debug()
 	{
-		
+		$data = $this->statistik->export_bulk('jakarta', 'organization_list', 'json');
+
+		$total_data = (int)count($data);
+		for ($i=0; $i < $total_data; $i++)
+		{
+			$total_data_array = (int)count($data[$i]);
+			for ($j=0; $j < $total_data_array; $j++)
+				$date_created[] = strtotime($data[$i][$j]['date_created']);
+		}
+
+		$new_array = array_count_values($date_created);
+
+		echo "<pre>";
+		print_r (json_encode($new_array));
+		echo "</pre>";
+
+		$data['content'] = $this->load->view('v_calmap', null, TRUE);
+
+		$this->load->view('template/v_base_template', $data);
 	}
 }
 

@@ -243,71 +243,6 @@ class Statistik
 	}
 
 	/*
-		Melihat aktifitas organisasi berdasarkan tanggal upload dataset
-	*/
-	public function aktifitas_organisasi($org, $axis)
-	{
-		$data = $this->dataset_list($org, 'org');
-
-		$total = (int)count($data);
-		for ($i=0; $i < $total; $i++)
-		{
-			if (!empty($data[$i]['date_created']))
-			{
-				$month = explode('-', $data[$i]['date_created']); // Memisahkan tahun, bulan dan hari
-				$date_created[] = $month[0].'-'.$month[1]; // Menggabungkan tahun dan bulan
-			}
-		}
-
-		$populated = array_count_values($date_created); // Pengelompokan berdasarkan tahun dan bulan
-
-		ksort($populated); // Pengurutan ascending
-
-		if ($axis == 'x')
-		{
-			foreach ($populated as $key => $value)
-				$date[] = "'".$key."'";
-
-			return $date_populated = implode(',', $date);
-		}
-		else
-		{
-			return $date_populated = implode(',', $populated);
-		}
-	}
-
-	/*
-		Melihat aktifitas group berdasarkan tanggal upload dataset
-	*/
-	public function aktifitas_group($group, $axis)
-	{
-		$data = $this->dataset_list($group, 'group');
-
-		$total = (int)count($data);
-		for ($i=0; $i < $total; $i++)
-		{
-			$month = explode('-', $data[$i]['date_created']); // Memisahkan tahun, bulan dan hari
-			$date_created[] = $month[0].'-'.$month[1]; // Menggabungkan tahun dan bulan
-		}
-
-		$populated = array_count_values($date_created); // Pengelompokan berdasarkan tahun dan bulan
-
-		ksort($populated); // Pengurutan ascending
-
-		if ($axis == 'x')
-		{
-			foreach ($populated as $key => $value)
-				$date[] = "'".$key."'";
-
-			return $date_populated = implode(',', $date);
-		}
-		else
-		{
-			return $date_populated = implode(',', $populated);
-		}
-	}
-
-	/*
 		Mengambil 5 dataset terakhir dari grup/organisasi tertentu
 	*/
 	public function latest_dataset($param, $type)
@@ -375,32 +310,43 @@ class Statistik
 	/*
 		Mengeksport data portal berdasarkan grup/organisasi dan portal tertentu dalam format CSV atau JSON
 	*/
-	public function export($portal, $type, $param, $format = 'csv')
+	public function export($portal, $source, $api_type, $param, $format = 'csv')
 	{
-		($type == 'group_list') ? $type = 'group' : $type = 'org';
+		($source == 'group_list') ? $source = 'group' : $source = 'org';
 
 		$this->set_portal($portal);
-		$result = $this->dataset_list($param, $type);
+		$result = $this->dataset_list($param, $source);
 
 		if (is_array($result))
 		{
-			if ($format == 'json')
+			if ($api_type == 'unduh')
 			{
-				return json_encode($result);
+				if ($format == 'csv')
+				{
+					$total = (int)count($result);
+					for ($i=0; $i < $total; $i++)
+						$merger[$i] = implode(';', $result[$i]);
+					
+					$filename = 'data-'.$portal.'-'.$source.'-'.$param;
+
+					$this->_generate_csv($merger, $filename);
+				}
+				else
+				{
+					return json_encode($result);
+				}
 			}
-			elseif ($format == 'text')
+			elseif ($api_type == 'sebaran-grup')
 			{
-				return json_encode($this->sebaran_grup($result));
+				return $this->sebaran_grup($result, 'single');
+			}
+			elseif ($api_type == 'aktifitas')
+			{
+				return $this->aktifitas($result, 'single');
 			}
 			else
 			{
-				$total = (int)count($result);
-				for ($i=0; $i < $total; $i++)
-					$merger[$i] = implode(';', $result[$i]);
-				
-				$filename = 'data-'.$portal.'-'.$type.'-'.$param;
-
-				$this->_generate_csv($merger, $filename);
+				return FALSE;
 			}
 		}
 		else
@@ -412,10 +358,10 @@ class Statistik
 	/*
 		Mengeksport seluruh data portal berdasarkan grup/organisasi dan portal tertentu dalam format CSV atau JSON
 	*/
-	public function export_bulk($portal, $type, $format = 'csv')
+	public function export_bulk($portal, $source, $api_type, $format = 'csv')
 	{
 		$this->set_portal($portal);
-		$this->set_action($type.'?all_fields=true');
+		$this->set_action($source.'?all_fields=true');
 
 		$result = $this->process_api()->result;
 
@@ -438,33 +384,44 @@ class Statistik
 			}
 		}
 
-		($type == 'group_list') ? $type = 'group' : $type = 'org';
+		($source == 'group_list') ? $source = 'group' : $source = 'org';
 
 		$total_list = (int)count($list);
 		for ($i=0; $i < $total_list; $i++)
-			$dataset_list[] = $this->dataset_list($list[$i], $type);
+			$dataset_list[] = $this->dataset_list($list[$i], $source);
 
-		$total_dataset_list = (int)count($dataset_list);
-		for ($i=0; $i < $total_dataset_list; $i++)
-		{ 
-			$total_dataset_list_array = (int)count($dataset_list[$i]);
-			for ($j=0; $j < $total_dataset_list_array ; $j++)
-				$merger[$i][$j] = implode(';', $dataset_list[$i][$j]);
-		}
+		if ($api_type === 'unduh')
+		{
+			if ($format == 'csv')
+			{
+				$total_dataset_list = (int)count($dataset_list);
+				for ($i=0; $i < $total_dataset_list; $i++)
+				{ 
+					$total_dataset_list_array = (int)count($dataset_list[$i]);
+					for ($j=0; $j < $total_dataset_list_array ; $j++)
+						$merger[$i][$j] = implode(';', $dataset_list[$i][$j]);
+				}
 
-		if ($format == 'json')
-		{
-			return json_encode($dataset_list);
+				$filename = 'data-'.$source.'-'.$portal;
+
+				$this->_generate_csv($merger, $filename, true);
+			}
+			else
+			{
+				return json_encode($dataset_list);
+			}
 		}
-		elseif ($format == 'text')
+		elseif ($api_type == 'sebaran-grup')
 		{
-			return json_encode($this->sebaran_grup($dataset_list, 'bulk'));
+			return $this->sebaran_grup($dataset_list, 'bulk');
+		}
+		elseif ($api_type == 'aktifitas')
+		{
+			return $this->aktifitas($dataset_list, 'bulk');
 		}
 		else
 		{
-			$filename = 'data-'.$type.'-'.$portal;
-
-			$this->_generate_csv($merger, $filename, true);
+			return FALSE;
 		}
 	}
 
@@ -523,42 +480,66 @@ class Statistik
 			return implode(',', $yAxies);
 	}
 
-	public function sebaran_grup($data, $type = 'single')
+	public function aktifitas($data, $source)
 	{
 		$total_data = (int)count($data);
-		if ($type == 'bulk')
+		if ($source == 'bulk')
 		{
 			for ($i=0; $i < $total_data; $i++)
 			{
 				$total_data_array = (int)count($data[$i]);
 				for ($j=0; $j < $total_data_array; $j++)
-					$group_list[] = $data[$i][$j]['groups'];
+					$date_list[] = strtotime($data[$i][$j]['date_created']);
 			}
 		}
 		else
 		{
 			for ($i=0; $i < $total_data; $i++)
-				$group_list[] = $data[$i]['groups'];
+				$date_list[] = strtotime($data[$i]['date_created']);
 		}
 
-		$x_data = array_count_values($group_list);
-		$total = count($group_list);
+		$result = array_count_values($date_list);
+
+		return json_encode($result);
+	}
+
+	public function sebaran_grup($data, $source)
+	{
+		$total_data = (int)count($data);
+		
+		if ($source == 'bulk')
+		{
+			for ($i=0; $i < $total_data; $i++)
+			{
+				$total_data_array = (int)count($data[$i]);
+				for ($j=0; $j < $total_data_array; $j++)
+					$list[] = $data[$i][$j]['groups'];
+			}
+		}
+		else
+		{
+			for ($i=0; $i < $total_data; $i++)
+				$list[] = $data[$i]['groups'];
+		}
+
+		$populated_grup = array_count_values($list);
+		$total = count($list);
 
 		$i = 0;
-		foreach ($x_data as $key => $value)
+		foreach ($populated_grup as $key => $value)
 		{
 			if (!empty($key))
-				$a_data[$i]['name'] = $key;
+				$result[$i]['name'] = $key;
 			else
-				$a_data[$i]['name'] = 'Lain-lain';
+				$result[$i]['name'] = 'Tidak Memiliki Grup';
 
 			$persentase = ($value/$total) * 100;
-			$a_data[$i]['y'] = round($persentase, 2);
+			$result[$i]['y'] = round($persentase, 2);
 
 			$i++;
 		}
 
-		return $a_data;
+		return json_encode($result);
 	}
 
 	/*

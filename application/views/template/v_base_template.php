@@ -7,12 +7,16 @@
 		<title>Indonesia Open Data Portal Statistics</title>
 
 		<link rel="stylesheet" href="<?= base_url('assets/css/lumen.css') ?>">
-		<link rel="stylesheet" href="<?= base_url('assets/css/font-awesome.min.css') ?>">
 		<link rel="stylesheet" href="<?= base_url('assets/css/datastatisik.css') ?>">
+		
+		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+		<link rel="stylesheet" href="//cdn.jsdelivr.net/cal-heatmap/3.6.0/cal-heatmap.css" />
 
-		<script src="<?= base_url('assets/js/jquery-1.12.4.min.js') ?>"></script>
-		<script src="http://code.highcharts.com/highcharts.js"></script>
-		<script src="https://code.highcharts.com/highcharts-3d.js"></script>
+		<script type="text/javascript" src="//code.jquery.com/jquery-1.12.4.min.js"></script>
+		<script type="text/javascript" src="//code.highcharts.com/highcharts.js"></script>
+		<script type="text/javascript" src="//code.highcharts.com/highcharts-3d.js"></script>
+		<script type="text/javascript" src="//d3js.org/d3.v3.min.js"></script>
+		<script type="text/javascript" src="//cdn.jsdelivr.net/cal-heatmap/3.6.0/cal-heatmap.min.js"></script>
 	</head>
 	<body>
 		<nav class="navbar navbar-blue navbar-fixed-top" role="navigation">
@@ -56,6 +60,6 @@
 			</div>
 		</div>
 		
-		<script src="<?= base_url('assets/js/bootstrap.min.js') ?>"></script>
+		<script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	</body>
 </html>
