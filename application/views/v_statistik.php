@@ -28,7 +28,7 @@
 <div class="panel panel-primary">
 	<div class="panel-heading">
 		<h3 class="panel-title">
-			<i class="fa fa-fw fa-calendar"></i> Aktifitas Pengunggahan Dataset
+			<i class="fa fa-fw fa-calendar"></i> Aktifitas Pengunggahan Dataset Tahun 2016
 		</h3>
 	</div>
 	<div class="panel-body">
@@ -233,7 +233,11 @@
 				plotBorderWidth: null,
 				plotShadow: false,
 				type: 'pie',
-				style: { fontFamily: 'Asap'}
+				style: { fontFamily: 'Asap'},
+				options3d: {
+					enabled: true,
+					alpha: 45
+				}
 			},
 			title: {text:''},
 			subtitle: {
@@ -249,7 +253,9 @@
 					dataLabels: {
 						enabled: false
 					},
-					showInLegend: true
+					showInLegend: true,
+					innerSize: 100,
+					depth: 45
 				}
 			},
 			series: [{
@@ -273,6 +279,8 @@
 
 	var active_url = window.location.toString();
 	var url = active_url.replace('/statistik/', '/api/') + "/organization_list/aktifitas";
+
+	console.log(url);
 	
 	var cal = new CalHeatMap();
 	cal.init({

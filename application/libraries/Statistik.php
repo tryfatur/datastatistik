@@ -186,9 +186,20 @@ class Statistik
 	public function dataset_list($param, $type)
 	{
 		if ($type == 'org')
-			$this->set_action('package_search?start=0&rows=318&sort=created%20desc&q=organization:'.$param);
+		{
+			/* Mengambil jumlah dataset yang kemudian akan digunakan untuk looping pengambil list dataset*/
+			$this->set_action('package_search?start=0&q=organization:'.$param);
+			$package_count = $this->process_api()->result->count;
+
+			$this->set_action('package_search?start=0&rows='.$package_count.'&sort=created%20desc&q=organization:'.$param);
+		}
 		else
-			$this->set_action('package_search?start=0&rows=157&sort=created%20desc&q=groups:'.$param);
+		{
+			$this->set_action('package_search?start=0&q=groups:'.$param);
+			$package_count = $this->process_api()->result->count;
+
+			$this->set_action('package_search?start=0&rows='.$package_count.'&sort=created%20desc&q=groups:'.$param);
+		}
 
 		$result = $this->process_api()->result;
 
@@ -262,14 +273,14 @@ class Statistik
 			{
 				$date = explode('T', $result[$i]->resources[$j]->created);
 
-				$new_array[$i]['name']       = $result[$i]->name;
-				$new_array[$i]['title']      = $result[$i]->title;
-				$new_array[$i]['notes']      = $result[$i]->notes;
-				$new_array[$i]['format']     = $result[$i]->resources[$j]->format;
-				$new_array[$i]['date']       = $date[0];
-				$new_array[$i]['time']       = $date[1];
+				$new_array[$i]['name']      = $result[$i]->name;
+				$new_array[$i]['title']     = $result[$i]->title;
+				$new_array[$i]['notes']     = $result[$i]->notes;
+				$new_array[$i]['format']    = $result[$i]->resources[$j]->format;
+				$new_array[$i]['date']      = $date[0];
+				$new_array[$i]['time']      = $date[1];
 				$new_array[$i]['org_title'] = $result[$i]->organization->title;
-				$new_array[$i]['org_name']   = $result[$i]->organization->name;
+				$new_array[$i]['org_name']  = $result[$i]->organization->name;
 			}
 		}
 
@@ -293,14 +304,14 @@ class Statistik
 			{
 				$date = explode('T', $result[$i]->resources[$j]->created);
 
-				$new_array[$i]['name']       = $result[$i]->name;
-				$new_array[$i]['title']      = $result[$i]->title;
-				$new_array[$i]['notes']      = $result[$i]->notes;
-				$new_array[$i]['format']     = $result[$i]->resources[$j]->format;
-				$new_array[$i]['date']       = $date[0];
-				$new_array[$i]['time']       = $date[1];
-				$new_array[$i]['org_title']  = $result[$i]->organization->title;
-				$new_array[$i]['org_name']   = $result[$i]->organization->name;
+				$new_array[$i]['name']      = $result[$i]->name;
+				$new_array[$i]['title']     = $result[$i]->title;
+				$new_array[$i]['notes']     = $result[$i]->notes;
+				$new_array[$i]['format']    = $result[$i]->resources[$j]->format;
+				$new_array[$i]['date']      = $date[0];
+				$new_array[$i]['time']      = $date[1];
+				$new_array[$i]['org_title'] = $result[$i]->organization->title;
+				$new_array[$i]['org_name']  = $result[$i]->organization->name;
 			}
 		}
 
@@ -489,13 +500,15 @@ class Statistik
 			{
 				$total_data_array = (int)count($data[$i]);
 				for ($j=0; $j < $total_data_array; $j++)
-					$date_list[] = strtotime($data[$i][$j]['date_created']);
+					if (!empty($data[$i][$j]['date_created']))
+						$date_list[] = strtotime($data[$i][$j]['date_created']);
 			}
 		}
 		else
 		{
 			for ($i=0; $i < $total_data; $i++)
-				$date_list[] = strtotime($data[$i]['date_created']);
+				if (!empty($data[$i]['date_created']))
+					$date_list[] = strtotime($data[$i]['date_created']);
 		}
 
 		$result = array_count_values($date_list);

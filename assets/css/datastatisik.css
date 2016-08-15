@@ -1,3 +1,7 @@
+.panel-primary > .panel-heading {
+ background-color: #3E7CBF;
+}
+
 .navbar-blue {
   background-color: #3E7CBF;
   border-color: #2D69A9;

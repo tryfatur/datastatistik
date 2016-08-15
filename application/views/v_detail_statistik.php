@@ -26,8 +26,6 @@
 
 <hr>
 
-
-
 <?php if ($this->uri->segment(4) === 'group'): ?>
 	<div class="panel panel-primary">
 		<div class="panel-heading">
@@ -148,7 +146,11 @@
 				plotBorderWidth: null,
 				plotShadow: false,
 				type: 'pie',
-				style: { fontFamily: 'Asap'}
+				style: { fontFamily: 'Asap'},
+				options3d: {
+	                enabled: true,
+	                alpha: 45
+	            }
 			},
 			title: {
 				text: ''
@@ -166,7 +168,9 @@
 					dataLabels: {
 						enabled: false
 					},
-					showInLegend: true
+					showInLegend: true,
+					innerSize: 100,
+					depth: 45
 				}
 			},
 			series: [{
@@ -207,7 +211,7 @@
 		minDate: new Date(2016, 0),
 		maxDate: new Date(2016, 12),
 		tooltip: true,
-		legend: [20, 40, 60, 80, 100],
+		legend: [20, 40, 60, 80, 100, 120],
 		legendHorizontalPosition: "right"
 	});
 </script>

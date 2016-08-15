@@ -143,23 +143,7 @@ class Start extends CI_Controller
 
 	public function debug()
 	{
-		$data = $this->statistik->export_bulk('jakarta', 'organization_list', 'json');
-
-		$total_data = (int)count($data);
-		for ($i=0; $i < $total_data; $i++)
-		{
-			$total_data_array = (int)count($data[$i]);
-			for ($j=0; $j < $total_data_array; $j++)
-				$date_created[] = strtotime($data[$i][$j]['date_created']);
-		}
-
-		$new_array = array_count_values($date_created);
-
-		echo "<pre>";
-		print_r (json_encode($new_array));
-		echo "</pre>";
-
-		$data['content'] = $this->load->view('v_calmap', null, TRUE);
+		$data['content'] = $this->load->view('v_cal-heatmap', null, TRUE);
 
 		$this->load->view('template/v_base_template', $data);
 	}
