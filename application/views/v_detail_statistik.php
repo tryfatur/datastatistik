@@ -118,7 +118,7 @@
 					<td><a href="<?= $meta['url'].'/dataset/'.$value['uri'] ?>" target="_blank"><?=$value['name'] ?></a></td>
 					<td><?= $value['groups'] ?></td>
 					<td align="center"><?= $this->statistik->indonesian_date($value['date_created'])?></td>
-					<td align="center"><?=$value['time_created'] ?></td>
+					<td align="center"><?= gmdate('H:i:s', $value['time_created']) ?></td>
 				</tr>
 				<?php $i++; ?>
 			<?php endforeach ?>

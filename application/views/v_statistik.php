@@ -279,8 +279,6 @@
 
 	var active_url = window.location.toString();
 	var url = active_url.replace('/statistik/', '/api/') + "/organization_list/aktifitas";
-
-	console.log(url);
 	
 	var cal = new CalHeatMap();
 	cal.init({

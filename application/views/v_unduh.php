@@ -138,7 +138,7 @@
 				dataType: "jsonp",
 				url: portal_url + this.value + '?all_fields=true',
 				success: function(data) {
-					console.log(this.url);
+					//console.log(this.url);
 					$('#data').empty();
 					$('#data').append('<option value="">-- Pilih Organisasi/Grup --</option>');
 
@@ -208,7 +208,7 @@
 			var jenis = $('#jenisGabung').val();
 
 
-			$('#apiData').attr('href', 'api/' + 'bulk/' + portal + '/' + jenis);
+			$('#apiData').attr('href', 'api/' + portal + '/' + jenis + '/unduh/bulk');
 		}
 	});
 </script>

@@ -211,8 +211,9 @@ class Statistik
 				$total_results_array = (int)count($result->results[$i]);
 				for ($j=0; $j < $total_results_array; $j++)
 				{
+					$name                        = trim(str_replace(',', '-', $result->results[$i]->title));
+					$data_created[$i]['name']    = ucwords(strtolower($name));
 					$data_created[$i]['org']     = $result->results[$i]->organization->title;
-					$data_created[$i]['name']    = trim($result->results[$i]->title);
 					$data_created[$i]['org_uri'] = $result->results[$i]->organization->name;
 
 					// Jika dataset tidak memiliki grup
@@ -233,8 +234,8 @@ class Statistik
 						$created = explode('T', $result->results[$i]->resources[$j]->created);
 						$time = explode('.', $created[1]);
 
-						$data_created[$i]['date_created'] = $created[0];
-						$data_created[$i]['time_created'] = $time[0];
+						$data_created[$i]['date_created'] = strtotime($created[0]);
+						$data_created[$i]['time_created'] = strtotime($time[0]);
 					}
 					else
 					{
@@ -336,7 +337,7 @@ class Statistik
 				{
 					$total = (int)count($result);
 					for ($i=0; $i < $total; $i++)
-						$merger[$i] = implode(';', $result[$i]);
+						$merger[$i] = implode(',', $result[$i]);
 					
 					$filename = 'data-'.$portal.'-'.$source.'-'.$param;
 
@@ -410,7 +411,7 @@ class Statistik
 				{ 
 					$total_dataset_list_array = (int)count($dataset_list[$i]);
 					for ($j=0; $j < $total_dataset_list_array ; $j++)
-						$merger[$i][$j] = implode(';', $dataset_list[$i][$j]);
+						$merger[$i][$j] = implode(',', $dataset_list[$i][$j]);
 				}
 
 				$filename = 'data-'.$source.'-'.$portal;
@@ -447,7 +448,7 @@ class Statistik
 
 		$output = fopen('php://output', 'w'); // Create a file pointer connected to the output stream
 
-		fputcsv($output, array('organisasi', 'dataset', 'uri_org', 'group', 'tanggal_unggah', 'waktu_unggah', 'uri'), ';'); // Header kolom
+		fputcsv($output, array('dataset', 'organisasi', 'uri_org', 'group', 'uri_group', 'tanggal_unggah', 'waktu_unggah', 'uri'), ','); // Header kolom
 
 		if ($bulk)
 		{
@@ -455,7 +456,7 @@ class Statistik
 			for ($i=0; $i < $total_data; $i++)
 			{
 				foreach ($data[$i] as $line)
-					fputcsv($output, explode(';', $line), ';');
+					fputcsv($output, explode(',', $line), ',');
 			}
 		}
 		else
@@ -501,14 +502,14 @@ class Statistik
 				$total_data_array = (int)count($data[$i]);
 				for ($j=0; $j < $total_data_array; $j++)
 					if (!empty($data[$i][$j]['date_created']))
-						$date_list[] = strtotime($data[$i][$j]['date_created']);
+						$date_list[] = $data[$i][$j]['date_created'];
 			}
 		}
 		else
 		{
 			for ($i=0; $i < $total_data; $i++)
 				if (!empty($data[$i]['date_created']))
-					$date_list[] = strtotime($data[$i]['date_created']);
+					$date_list[] = $data[$i]['date_created'];
 		}
 
 		$result = array_count_values($date_list);
@@ -560,6 +561,9 @@ class Statistik
 	*/
 	public function indonesian_date($date)
 	{
+		if (is_int($date))
+			$date = date('Y-m-d', $date);
+
 		$BulanIndo = array("Januari", "Februari", "Maret",
 						   "April", "Mei", "Juni",
 						   "Juli", "Agustus", "September",

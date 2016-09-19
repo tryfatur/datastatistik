@@ -9,6 +9,7 @@ application/logs/*
 !application/logs/.htaccess
 
 application/views/v_cal-heatmap.php
+assets/js/statistics.js
 
 user_guide_src/build/*
 user_guide_src/cilexer/build/*

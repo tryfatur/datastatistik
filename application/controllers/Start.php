@@ -140,13 +140,6 @@ class Start extends CI_Controller
 
 		$this->load->view('template/v_base_template', $data);
 	}
-
-	public function debug()
-	{
-		$data['content'] = $this->load->view('v_cal-heatmap', null, TRUE);
-
-		$this->load->view('template/v_base_template', $data);
-	}
 }
 
 /* End of file Start.php */
