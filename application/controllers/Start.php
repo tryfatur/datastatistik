@@ -58,6 +58,35 @@ class Start extends CI_Controller
 		}
 	}
 
+	public function org_group()
+	{
+		$portal = $this->uri->segment(3);
+		$status = $this->statistik->portal_status($portal);
+
+		if ($status)
+		{
+			if (isset($portal))
+			{
+				$this->statistik->set_portal($portal);
+
+				$data['meta']    = $this->statistik->portal_metadata($portal);
+				$data['list']    = $this->statistik->list_org_groups($portal, 'org');
+
+				$data['content'] = $this->load->view('v_list_org_group', $data, TRUE);
+
+				$this->load->view('template/v_base_template', $data);
+			}
+			else
+			{
+				show_404();
+			}
+		}
+		else
+		{
+			show_404();
+		}
+	}
+
 	public function detail()
 	{
 		$this->statistik->set_portal($this->uri->segment(3));

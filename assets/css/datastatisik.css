@@ -131,3 +131,7 @@ fieldset[disabled] .navbar-blue .btn-link:focus {
 #datasetList > tbody > tr > td > a:hover {
   text-decoration: underline;
 }
+
+.thumbnail {
+  min-height: 475px;
+}

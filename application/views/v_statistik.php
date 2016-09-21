@@ -85,6 +85,9 @@
 	<a class="btn btn-primary" data-toggle="modal" href='#topten-org'>
 		<i class="fa fa-fw fa-eye"></i> Lihat Statistik Lebih Detail
 	</a>
+	<a class="btn btn-success" data-toggle="modal" href='<?= base_url().'start/org_group/'.$this->uri->segment(3) ?>'>
+		<i class="fa fa-fw fa-sitemap"></i> Organisasi Seluruhnya
+	</a>
 </div>
 <hr>
 <div id="top-group"></div>

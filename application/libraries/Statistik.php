@@ -101,6 +101,24 @@ class Statistik
 		return json_decode($result);
 	}
 
+	public function list_org_groups($portal, $type)
+	{
+		if ($this->_portal_url == 'http://data.go.id')
+			if ($type == 'org') 
+				$this->set_action('organization_list?all_fields=true');
+			else
+				$this->set_action('group_list?all_fields=true');
+		else
+			if ($type == 'org') 
+				$this->set_action('organization_list?all_fields=true');
+			else
+				$this->set_action('group_list?all_fields=true');
+
+		$result = $this->process_api();
+		
+		return $result->result;
+	}
+
 	/*
 		Mengambil jumlah total organisasi dalam sebuah portal
 	*/
@@ -211,8 +229,12 @@ class Statistik
 				$total_results_array = (int)count($result->results[$i]);
 				for ($j=0; $j < $total_results_array; $j++)
 				{
-					$name                        = trim(str_replace(',', '-', $result->results[$i]->title));
-					$data_created[$i]['name']    = ucwords(strtolower($name));
+					$name    = trim(str_replace(',', '-', $result->results[$i]->title));
+					$name    = ucwords(strtolower($name));
+					$search  = array(' Dan ', ' Yang ', ' Di ', ' Ke ', 'Apbd');
+					$replace = array(' dan ', ' yang ', ' di ', ' ke ', 'APBD');
+
+					$data_created[$i]['name']    = str_replace($search, $replace, $name);
 					$data_created[$i]['org']     = $result->results[$i]->organization->title;
 					$data_created[$i]['org_uri'] = $result->results[$i]->organization->name;
 
