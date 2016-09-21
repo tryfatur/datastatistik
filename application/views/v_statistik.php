@@ -293,7 +293,7 @@
 		minDate: new Date(2016, 0),
 		maxDate: new Date(2016, 12),
 		tooltip: true,
-		legend: [20, 40, 60, 80, 100],
+		legend: [30, 60, 90, 120, 150],
 		legendHorizontalPosition: "right"
 	});
 </script>
