@@ -106,7 +106,11 @@
 			<thead>
 				<th>No</th>
 				<th>Dataset</th>
+			<?php if ($this->uri->segment(4) == 'group'): ?>
+				<th>Organisasi</th>
+			<?php else: ?>
 				<th>Grup</th>
+			<?php endif ?>
 				<th>Tanggal Unggah</th>
 				<th>Waktu Unggah</th>
 			</thead>
@@ -116,7 +120,11 @@
 				<tr>
 					<td align="center"><?= $i ?></td>
 					<td><a href="<?= $meta['url'].'/dataset/'.$value['uri'] ?>" target="_blank"><?=$value['name'] ?></a></td>
+				<?php if ($this->uri->segment(4) == 'group'): ?>
+					<td><?= $value['org'] ?></td>
+				<?php else: ?>
 					<td><?= $value['groups'] ?></td>
+				<?php endif ?>
 					<td align="center"><?= $this->statistik->indonesian_date($value['date_created'])?></td>
 					<td align="center"><?= gmdate('H:i:s', $value['time_created']) ?></td>
 				</tr>
@@ -124,6 +132,17 @@
 			<?php endforeach ?>
 			</tbody>
 		</table>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-6">
+		<a class="btn btn-primary" href="<?= $pagination['prev'][0] ?>">&lt; <?= $pagination['prev'][1] ?></a>
+	</div>
+	<div class="pull-right">
+		<div class="col-md-6">
+			<a class="btn btn-primary" href="<?= $pagination['next'][0] ?>"><?= $pagination['next'][1] ?> &gt;</a>
+		</div>
 	</div>
 </div>
 

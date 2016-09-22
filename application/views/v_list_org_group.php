@@ -7,21 +7,19 @@
 	</h1>
 </div>
 <div class="row">
-	<!-- <div class="col-md-12">
-		<form>
-			<div class="form-group">
-				<input type="text" name="search" class="form-control input-lg" placeholder="Organisasi apa yang Anda cari ?" list="orgList">
-			</div>
-		</form>
-	</div> -->
+	<div class="col-md-12">
+		<div class="form-group">
+			<input type="text" name="search" class="form-control input-lg" placeholder="Organisasi apa yang Anda cari ?" id="orgList">
+		</div>
+	</div>
 	<?php foreach ($list as $key => $value): ?>
 	<div class="col-sm-6 col-md-3">
-		<div class="thumbnail">
+		<div class="thumbnail text-center list-org">
 			<img src="<?= $value->image_display_url ?>">
 			<div class="caption">
 				<h4><?= $value->title; ?></h4>
 			</div>
-			<p class="text-center">
+			<p>
 				<a href="<?= base_url('start/detail').'/'.$this->uri->segment(3).'/org/'.$value->name ?>" class="btn btn-primary" role="button">
 					Lihat Statistik
 				</a>

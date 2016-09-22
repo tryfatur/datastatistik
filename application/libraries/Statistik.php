@@ -119,6 +119,28 @@ class Statistik
 		return $result->result;
 	}
 
+	public function pagination_org_groups($portal, $type, $current)
+	{
+		$data = $this->list_org_groups($portal, $type);
+
+		foreach ($data as $key => $value) 
+		{
+			if ($value->name == $current)
+			{
+				$prev = $key - 1;
+				$next = $key + 1;
+
+				$result['prev'][] = $data[$prev]->name;
+				$result['prev'][] = $data[$prev]->title;
+
+				$result['next'][] = $data[$next]->name;
+				$result['next'][] = $data[$next]->title;
+			}
+		}
+
+		return $result;
+	}
+
 	/*
 		Mengambil jumlah total organisasi dalam sebuah portal
 	*/

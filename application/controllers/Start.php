@@ -67,14 +67,24 @@ class Start extends CI_Controller
 		{
 			if (isset($portal))
 			{
-				$this->statistik->set_portal($portal);
+				$api = $this->uri->segment(4);
+				
+				if (isset($api) && ( $api == 'json'))
+				{
+					$list = $this->statistik->list_org_groups($portal, 'org');
+					echo json_encode($list);
+				}
+				else
+				{
+					$this->statistik->set_portal($portal);
 
-				$data['meta']    = $this->statistik->portal_metadata($portal);
-				$data['list']    = $this->statistik->list_org_groups($portal, 'org');
+					$data['meta']    = $this->statistik->portal_metadata($portal);
+					$data['list']    = $this->statistik->list_org_groups($portal, 'org');
 
-				$data['content'] = $this->load->view('v_list_org_group', $data, TRUE);
+					$data['content'] = $this->load->view('v_list_org_group', $data, TRUE);
 
-				$this->load->view('template/v_base_template', $data);
+					$this->load->view('template/v_base_template', $data);
+				}
 			}
 			else
 			{
@@ -113,7 +123,9 @@ class Start extends CI_Controller
 			$data['latest_dataset'] = $this->statistik->latest_dataset($group_name, 'group');
 		}
 
-		$data['content']      = $this->load->view('v_detail_statistik', $data, TRUE);
+		$data['pagination'] = $this->statistik->pagination_org_groups($this->uri->segment(3),$this->uri->segment(4), $this->uri->segment(5));
+
+		$data['content']    = $this->load->view('v_detail_statistik', $data, TRUE);
 
 		$this->load->view('template/v_base_template', $data);
 	}

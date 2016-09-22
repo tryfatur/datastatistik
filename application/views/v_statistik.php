@@ -86,7 +86,7 @@
 		<i class="fa fa-fw fa-eye"></i> Lihat Statistik Lebih Detail
 	</a>
 	<a class="btn btn-success" data-toggle="modal" href='<?= base_url().'start/org_group/'.$this->uri->segment(3) ?>'>
-		<i class="fa fa-fw fa-sitemap"></i> Organisasi Seluruhnya
+		<i class="fa fa-fw fa-sitemap"></i> Organisasi Selengkapnya
 	</a>
 </div>
 <hr>
