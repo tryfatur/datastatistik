@@ -130,11 +130,25 @@ class Statistik
 				$prev = $key - 1;
 				$next = $key + 1;
 
-				$result['prev'][] = $data[$prev]->name;
-				$result['prev'][] = $data[$prev]->title;
+				if (!empty($data[$prev]))
+				{
+					$result['prev'][] = $data[$prev]->name;
+					$result['prev'][] = $data[$prev]->title;
+				}
+				else
+				{
+					$result['prev'] = FALSE;
+				}
 
-				$result['next'][] = $data[$next]->name;
-				$result['next'][] = $data[$next]->title;
+				if (!empty($data[$next]))
+				{
+					$result['next'][] = $data[$next]->name;
+					$result['next'][] = $data[$next]->title;
+				}
+				else
+				{
+					$result['next'] = FALSE;
+				}
 			}
 		}
 
@@ -311,22 +325,30 @@ class Statistik
 		$result = $this->process_api()->result->results;
 
 		$total_result = (int)count($result);
-		for ($i=0; $i < $total_result; $i++)
-		{ 
-			$total_results_array = (int)count($result[$i]);
-			for ($j=0; $j < $total_results_array; $j++)
-			{
-				$date = explode('T', $result[$i]->resources[$j]->created);
 
-				$new_array[$i]['name']      = $result[$i]->name;
-				$new_array[$i]['title']     = $result[$i]->title;
-				$new_array[$i]['notes']     = $result[$i]->notes;
-				$new_array[$i]['format']    = $result[$i]->resources[$j]->format;
-				$new_array[$i]['date']      = $date[0];
-				$new_array[$i]['time']      = $date[1];
-				$new_array[$i]['org_title'] = $result[$i]->organization->title;
-				$new_array[$i]['org_name']  = $result[$i]->organization->name;
+		if ($total_result > 0)
+		{
+			for ($i=0; $i < $total_result; $i++)
+			{ 
+				$total_results_array = (int)count($result[$i]);
+				for ($j=0; $j < $total_results_array; $j++)
+				{
+					$date = explode('T', $result[$i]->resources[$j]->created);
+
+					$new_array[$i]['name']      = $result[$i]->name;
+					$new_array[$i]['title']     = $result[$i]->title;
+					$new_array[$i]['notes']     = $result[$i]->notes;
+					$new_array[$i]['format']    = $result[$i]->resources[$j]->format;
+					$new_array[$i]['date']      = $date[0];
+					$new_array[$i]['time']      = $date[1];
+					$new_array[$i]['org_title'] = $result[$i]->organization->title;
+					$new_array[$i]['org_name']  = $result[$i]->organization->name;
+				}
 			}
+		}
+		else
+		{
+			$new_array = [];
 		}
 
 		return $new_array;

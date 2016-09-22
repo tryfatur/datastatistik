@@ -11,6 +11,8 @@
 	<p class="text-right">Bergabung sejak <?= $this->statistik->indonesian_date($created[0]) ?> &#149; <?= $result->package_count ?> dataset &#149; <?= $result->state ?></p>
 </div>
 
+<?php if (!empty($dataset_list)): ?>
+
 <div class="panel panel-primary">
 	<div class="panel-heading">
 		<h3 class="panel-title">
@@ -94,7 +96,6 @@
 
 <hr>
 
-
 <div class="panel panel-primary">
 	<div class="panel-heading">
 		<h3 class="panel-title">
@@ -135,15 +136,30 @@
 	</div>
 </div>
 
+<?php else: ?>
+
+<div class="alert alert-warning">
+	<h1 class="text-center" style="color: #fff;">
+		<i class="fa fa-fw fa-chain-broken"></i>
+		Organisasi Ini Tidak Memiliki Dataset
+	</h1>
+</div>
+
+<?php endif ?>
+
 <div class="row">
+<?php if ($pagination['prev']): ?>
 	<div class="col-md-6">
 		<a class="btn btn-primary" href="<?= $pagination['prev'][0] ?>">&lt; <?= $pagination['prev'][1] ?></a>
 	</div>
+<?php endif ?>
+<?php if ($pagination['next']): ?>
 	<div class="pull-right">
 		<div class="col-md-6">
 			<a class="btn btn-primary" href="<?= $pagination['next'][0] ?>"><?= $pagination['next'][1] ?> &gt;</a>
 		</div>
 	</div>
+<?php endif ?>
 </div>
 
 <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
